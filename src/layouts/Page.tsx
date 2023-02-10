@@ -1,17 +1,17 @@
-import React, { FC } from 'react';
+import React from "react";
 
-import Header from '../components/ui/Header/Header';
-import Footer from '../components/ui/Footer';
+import Header from "../components/Header/Header";
+import Footer from "../components/Footer";
 
 interface PageProps {
   children: React.ReactNode;
 }
 
-const Page: FC<PageProps> = ({ children }) => {
+const Page: React.FC<PageProps> = ({ children }) => {
   return (
-    <div className="flex flex-col items-center justify-between min-h-screen p-3 bg-[conic-gradient(at_right,_var(--tw-gradient-stops))] from-indigo-200 via-slate-600 to-indigo-200">
+    <div className="p-3 flex flex-col items-center justify-between min-h-screen bg-[conic-gradient(at_right,_var(--tw-gradient-stops))] from-indigo-200 via-slate-600 to-indigo-200">
       <Header />
-      <main className="flex flex-col items-center justify-center w-full h-full px-16 py-8">
+      <main className="flex flex-col items-center justify-center w-full h-full px-4 py-2 sm:px-8 sm:py-4 md:px-12 md:py-6 lg:px-16 lg:py-8">
         {children}
       </main>
       <Footer />

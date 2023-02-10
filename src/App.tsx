@@ -3,17 +3,13 @@ import { Routes, Route } from 'react-router-dom';
 import Spinner from './components/ui/Spinner';
 
 const Home = lazy(() => import('./pages/Home'));
-const About = lazy(() => import('./pages/About'));
 const NotFound = lazy(() => import('./pages/NotFound'));
-const Contact = lazy(() => import('./pages/Contact/Contact'));
 
 const App: FC = () => {
   return (
     <Suspense fallback={<Spinner />}>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
