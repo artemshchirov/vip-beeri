@@ -9,6 +9,7 @@ import { Toast } from "primereact/toast";
 import { useFormik } from "formik";
 import { classNames } from "primereact/utils";
 import logo from "../assets/logo.png";
+import CustomLink from "../components/CustomLink";
 
 interface FormValues {
   name: string;
@@ -243,7 +244,7 @@ const Home: React.FC = () => {
           </div>
           <form
             onSubmit={formik.handleSubmit}
-            className="flex flex-col md:flex-row items-center w-full gap-2 my-2 sm:w-full lg:w-6/12"
+            className="flex flex-col items-center w-full gap-2 my-2 md:flex-row sm:w-full lg:w-6/12"
           >
             <div className="flex flex-row w-full gap-2 md:w-8/12">
               <Toast ref={toast} className="pl-5" />
@@ -311,9 +312,12 @@ const Home: React.FC = () => {
       <footer className="px-4 md:px-4 xl:px-8 lg:px-6 py-2.5 bg-white border-gray-200  dark:bg-gray-800">
         <span className="container flex flex-wrap items-center h-6 mx-auto text-sm text-gray-500 sm:h-9 sm:text-center dark:text-gray-400">
           © 2023&nbsp;
-          <a href="#" className="hover:underline">
+          <CustomLink
+            href="https://artemshchirov.github.io/portfolio/"
+            className="hover:underline"
+          >
             Developed by Ɐrtem
-          </a>
+          </CustomLink>
         </span>
       </footer>
     </div>
