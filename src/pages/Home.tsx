@@ -8,8 +8,12 @@ import { Dropdown, DropdownChangeParams } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
 import { useFormik } from "formik";
 import { classNames } from "primereact/utils";
+import { doc, setDoc } from "firebase/firestore";
+import { v4 as uuid } from "uuid";
 import logo from "../assets/logo.png";
 import CustomLink from "../components/CustomLink";
+import Signin from "./Signin";
+import Signup from "./Signup";
 
 interface FormValues {
   name: string;
@@ -133,6 +137,7 @@ const Home: React.FC = () => {
   const [tableRows, setTableRows] = useState<Row[]>([]);
   const [selectedName, setSelectedName] = useState<string | undefined>("");
   const [selectedRow, setSelectedRow] = useState<Row | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const toast = useRef<Toast>(null);
 
   useEffect(() => {
@@ -175,8 +180,18 @@ const Home: React.FC = () => {
       return {};
     },
 
-    onSubmit: (data) => {
+    onSubmit: async (data) => {
       console.log("data ==>", data);
+
+      try {
+        setLoading(true);
+        // await setDoc(doc(db, "rows", res.user));
+      } catch (err: any) {
+        // TODO type
+        console.log("onSubmit", err.message);
+      } finally {
+        setLoading(false);
+      }
 
       setTableRows([
         {
@@ -231,9 +246,12 @@ const Home: React.FC = () => {
           </a>
         </nav>
       </header>
-
-      <main className="flex justify-center w-full p-2 no-scrollbar md:p-4">
-        <section className="container flex flex-wrap items-center justify-center ">
+      <main className="flex flex-col items-center justify-center w-full p-2 no-scrollbar md:p-4">
+        <section className="container flex flex-wrap items-center justify-center">
+          <Signup />
+          <Signin />
+        </section>
+        <section className="container flex flex-wrap items-center justify-center">
           <div className="flex justify-center w-full">
             <Calendar
               className="w-full text-xs sm:w-full lg:w-6/12"
