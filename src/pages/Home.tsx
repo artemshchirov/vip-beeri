@@ -132,7 +132,7 @@ interface ToastOptions {
   detail: string;
 }
 
-const Home: React.FC = () => {
+const Home = () => {
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [tableRows, setTableRows] = useState<Row[]>([]);
   const [selectedName, setSelectedName] = useState<string | undefined>("");
@@ -234,8 +234,13 @@ const Home: React.FC = () => {
     }
   };
 
+  // NOTE SignOut
+  // import { signOut } from "firebase/auth";
+  // import { auth } from "../firebase";
+  // button => () => signOut(auth)
+
   return (
-    <div className="flex flex-col min-h-screen justify-between bg-[conic-gradient(at_right,_var(--tw-gradient-stops))] from-indigo-200 via-slate-600 to-indigo-200">
+    <div className="mb-auto flex flex-col min-h-screen justify-center bg-[conic-gradient(at_right,_var(--tw-gradient-stops))] from-indigo-200 via-slate-600 to-indigo-200">
       <header className="px-2 md:px-4 xl:px-8 lg:px-6 py-2.5 bg-white border-gray-200 dark:bg-gray-800">
         <nav className="container flex flex-wrap items-center justify-between mx-auto">
           <a className="flex items-center" href="#">
@@ -246,68 +251,84 @@ const Home: React.FC = () => {
           </a>
         </nav>
       </header>
-      <main className="flex flex-col items-center justify-center w-full p-2 no-scrollbar md:p-4">
-        <section className="container flex flex-wrap items-center justify-center">
-          <Signup />
-          <Signin />
-        </section>
-        <section className="container flex flex-wrap items-center justify-center">
-          <div className="flex justify-center w-full">
+      <main className="flex flex-col items-center justify-center flex-1 w-full p-2 no-scrollbar md:p-4">
+        <section className="container xl:h-[596px] flex flex-wrap xl:justify-evenly">
+          <div className="flex flex-col items-center w-full h-full xl:w-4/12 ">
             <Calendar
-              className="w-full text-xs sm:w-full lg:w-6/12"
+              className="w-full text-xs lg:w-6/12 xl:w-full xl:min-h-[435px]"
               value={selectedDate}
               onChange={(e: CalendarChangeParams) => onCalendarChange(e)}
               inline
             />
+            <form
+              onSubmit={formik.handleSubmit}
+              className="flex flex-col items-center w-full my-3 xl:mt-5 sm:w-full lg:w-6/12 xl:w-full xl:flex-col"
+            >
+              <div className="flex flex-row w-full gap-2 xl:gap-2 xl:w-full">
+                <Toast ref={toast} className="pl-5" />
+                <div className="w-6/12">
+                  <Dropdown
+                    inputId="name"
+                    value={selectedName}
+                    options={dropdownValues}
+                    optionValue="id"
+                    optionLabel="name"
+                    placeholder={selectedName || "Имя"}
+                    className={classNames("w-full", {
+                      "p-invalid": isFormFieldInvalid("name") && !selectedName,
+                    })}
+                    onChange={(e: DropdownChangeParams) => onDropdownChange(e)}
+                  />
+                </div>
+                <div className="w-6/12">
+                  <InputText
+                    name="date"
+                    value={selectedDate}
+                    className={classNames("w-full", {
+                      "p-invalid": isFormFieldInvalid("date") && !selectedDate,
+                    })}
+                    placeholder={selectedDate || "Дата"}
+                    disabled={selectedDate === formik.initialValues.date}
+                    readOnly
+                  />
+                </div>
+              </div>
+              <div className="w-full mt-2">
+                <Button
+                  className="w-full whitespace-nowrap"
+                  type="submit"
+                  label="Добавить"
+                  icon="pi pi-check"
+                  aria-label="Submit"
+                  disabled={
+                    selectedName === formik.initialValues.name ||
+                    selectedDate === formik.initialValues.date
+                  }
+                />
+              </div>
+              <div className="flex justify-between w-full gap-2 mt-2">
+                <Button
+                  className="w-6/12 whitespace-nowrap "
+                  type="button"
+                  label="Изменить"
+                  icon="pi pi-user"
+                  aria-label="Edit"
+                  style={{ background: "orange", border: "transparent" }}
+                />
+                <Button
+                  className="w-6/12 whitespace-nowrap "
+                  type="button"
+                  label="Удалить"
+                  icon="pi pi-times"
+                  aria-label="Delete"
+                  style={{ background: "orangered", border: "transparent" }}
+                />
+              </div>
+            </form>
           </div>
-          <form
-            onSubmit={formik.handleSubmit}
-            className="flex flex-col items-center w-full gap-2 my-2 md:flex-row sm:w-full lg:w-6/12"
-          >
-            <div className="flex flex-row w-full gap-2 md:w-8/12">
-              <Toast ref={toast} className="pl-5" />
-              <div className="w-full ">
-                <Dropdown
-                  inputId="name"
-                  value={selectedName}
-                  options={dropdownValues}
-                  optionValue="id"
-                  optionLabel="name"
-                  placeholder={selectedName || "Имя"}
-                  className={classNames("w-full", {
-                    "p-invalid": isFormFieldInvalid("name") && !selectedName,
-                  })}
-                  onChange={(e: DropdownChangeParams) => onDropdownChange(e)}
-                />
-              </div>
-              <div className="w-full ">
-                <InputText
-                  name="date"
-                  value={selectedDate}
-                  className={classNames("w-full", {
-                    "p-invalid": isFormFieldInvalid("date") && !selectedDate,
-                  })}
-                  placeholder={selectedDate || "Дата"}
-                  disabled={selectedDate === formik.initialValues.date}
-                  readOnly
-                />
-              </div>
-            </div>
-            <div className="w-full md:w-4/12">
-              <Button
-                className="w-full whitespace-nowrap"
-                type="submit"
-                label="Добавить в таблицу"
-                disabled={
-                  selectedName === formik.initialValues.name ||
-                  selectedDate === formik.initialValues.date
-                }
-              />
-            </div>
-          </form>
-          <div className="flex justify-center w-full ">
+          <div className="flex justify-center w-full xl:w-7/12">
             <DataTable
-              className="w-full text-xs sm:w-full lg:w-6/12"
+              className="w-full text-xs sm:w-full lg:w-6/12 xl:w-full"
               value={tableRows}
               selectionMode="single"
               selection={selectedRow}
