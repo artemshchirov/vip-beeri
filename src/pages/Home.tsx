@@ -314,6 +314,7 @@ const Home = () => {
                   icon="pi pi-user"
                   aria-label="Edit"
                   style={{ background: "orange", border: "transparent" }}
+                  disabled={selectedRow === null}
                 />
                 <Button
                   className="w-6/12 whitespace-nowrap "
@@ -322,6 +323,7 @@ const Home = () => {
                   icon="pi pi-times"
                   aria-label="Delete"
                   style={{ background: "orangered", border: "transparent" }}
+                  disabled={selectedRow === null}
                 />
               </div>
             </form>
@@ -341,7 +343,12 @@ const Home = () => {
               emptyMessage="Данные отсутствуют"
               paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
             >
-              <Column field="name" header="Имя" sortable></Column>
+              <Column
+                field="name"
+                header="Имя"
+                sortable
+                style={{ width: "50%" }}
+              ></Column>
               <Column field="date" header="Дата" sortable></Column>
             </DataTable>
           </div>
