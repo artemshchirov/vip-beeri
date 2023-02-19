@@ -15,14 +15,19 @@ const Signin = () => {
 
   const onSubmit = async (e: any) => {
     e.preventDefault();
+    setLoading(true);
     const email = e.target[0].value;
     const password = e.target[1].value;
-
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/");
     } catch (err) {
+      if (err instanceof Error && typeof err.message === "string")
+        console.error("Signin error ==>", err.message);
+      else console.error("Signin error ==>", err);
+    } finally {
       setError(true);
+      setLoading(false);
     }
   };
 
