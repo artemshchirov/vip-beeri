@@ -5,13 +5,20 @@ import { InputText } from "primereact/inputtext";
 import { DataTable } from "primereact/datatable";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
+import { Dialog } from "primereact/dialog";
 import { Toast } from "primereact/toast";
 import { classNames } from "primereact/utils";
-import { collection, addDoc, Timestamp } from "firebase/firestore";
-import { onSnapshot, query } from "firebase/firestore";
-import { db } from "../firebase";
 import { useFormik } from "formik";
 import { v4 as uuid } from "uuid";
+import { onSnapshot, query } from "firebase/firestore";
+import { db } from "../firebase";
+import {
+  collection,
+  Timestamp,
+  deleteDoc,
+  addDoc,
+  doc,
+} from "firebase/firestore";
 import CustomLink from "../components/CustomLink";
 import logo from "../assets/logo.png";
 
@@ -21,14 +28,14 @@ interface FormValues {
 }
 
 interface Row {
-  id: number;
+  id: string;
   name: string;
   date: Date;
   time: string;
 }
 
 interface ToastOptions {
-  severity: "success" | "error";
+  severity: "success" | "info" | "warn" | "error";
   summary: string;
   detail: string;
 }
@@ -49,6 +56,12 @@ const Home = () => {
   const [tableRows, setTableRows] = useState<Row[]>([]);
   const [selectedRow, setSelectedRow] = useState<Row | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isSubmitLoading, setIsSubmitLoading] = useState<boolean>(false);
+  const [isEditLoading, setIsEditLoading] = useState<boolean>(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false);
+
+  const [isDeleteRowModal, setIsDeleteRowModal] = useState<boolean>(false);
+
   const toast = useRef<Toast>(null);
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -78,28 +91,34 @@ const Home = () => {
     },
 
     onSubmit: async (data) => {
-      setLoading(true);
+      setIsSubmitLoading(true);
       console.log("Home onSubmit data ==>", data);
       try {
-        await addDoc(collection(db, "rows"), {
+        await addDoc(collection(db, "table"), {
           id: uuid(),
           name: formik.values.name,
           date: formik.values.date,
           time: Timestamp.now().toDate(),
         });
+
+        showToast({
+          severity: "success",
+          summary: "Таблица обновлена",
+          detail: `${data.name} — ${data.date}`,
+        });
       } catch (err) {
         if (err instanceof Error && typeof err.message === "string")
-          console.error("Signin error ==>", err.message);
-        else console.error("Signin error ==>", err);
-      } finally {
-        setLoading(false);
-      }
+          console.error("Home onSubmit error ==>", err.message);
+        else console.error("Home onSubmit error ==>", err);
 
-      showToast({
-        severity: "success",
-        summary: "Таблица обновлена",
-        detail: `${data.name} — ${data.date}`,
-      });
+        showToast({
+          severity: "error",
+          summary: "Таблица не обновлена",
+          detail: `Ошибка добавления ${data.name} — ${data.date}`,
+        });
+      } finally {
+        setIsSubmitLoading(false);
+      }
 
       formik.setFieldValue("date", formik.initialValues.date);
     },
@@ -111,13 +130,13 @@ const Home = () => {
 
   const fetchRows = async () => {
     setLoading(true);
-    const q = query(collection(db, "rows"));
+    const q = query(collection(db, "table"));
     try {
       onSnapshot(q, (querySnapshot) => {
         setTableRows(
           querySnapshot.docs.map(
             (doc): Row => ({
-              id: doc.data().id,
+              id: doc.id,
               name: doc.data().name,
               date: doc.data().date,
               time: doc.data().time,
@@ -127,8 +146,8 @@ const Home = () => {
       });
     } catch (err) {
       if (err instanceof Error && typeof err.message === "string")
-        console.error("Signin error ==>", err.message);
-      else console.error("Signin error ==>", err);
+        console.error("Home fetchRows error ==>", err.message);
+      else console.error("Home fetchRows error ==>", err);
     } finally {
       setLoading(false);
     }
@@ -158,6 +177,35 @@ const Home = () => {
       formik.setFieldValue("date", newDate);
       console.log("newDate ==>", newDate);
     }
+  };
+
+  const handleDelete = async () => {
+    setIsDeleteLoading(true);
+    setIsDeleteRowModal(false);
+
+    if (selectedRow) {
+      const rowDocRef = doc(db, "table", selectedRow.id);
+      console.log("rowDocRef ==>", rowDocRef.firestore.toJSON());
+      try {
+        await deleteDoc(rowDocRef);
+        showToast({
+          severity: "info",
+          summary: "Таблица обновлена",
+          detail: `Удалено ${selectedRow.name} — ${selectedRow.date}`,
+        });
+        setSelectedRow(null);
+      } catch (err) {
+        if (err instanceof Error && typeof err.message === "string")
+          console.error("Home handleDelete error ==>", err.message);
+        else console.error("Home handleDelete error ==>", err);
+        showToast({
+          severity: "error",
+          summary: "Таблица не обновлена",
+          detail: `Ошибка удаления ${selectedRow.name} — ${selectedRow.date}`,
+        });
+      }
+    }
+    setIsDeleteLoading(false);
   };
 
   // NOTE SignOut
@@ -191,7 +239,7 @@ const Home = () => {
               className="flex flex-col items-center w-full my-3 xl:mt-5 sm:w-full lg:w-6/12 xl:w-full xl:flex-col"
             >
               <div className="flex flex-row w-full gap-2 xl:gap-2 xl:w-full">
-                <Toast ref={toast} className="pl-5" />
+                <Toast ref={toast} className="pl-5" baseZIndex={2000}/>
                 <div className="w-6/12">
                   <Dropdown
                     inputId="name"
@@ -228,7 +276,7 @@ const Home = () => {
                   label="Добавить"
                   icon="pi pi-check"
                   aria-label="Submit"
-                  loading={loading}
+                  loading={isSubmitLoading}
                   disabled={
                     formik.values.name === formik.initialValues.name ||
                     formik.values.date === formik.initialValues.date
@@ -243,6 +291,14 @@ const Home = () => {
                   icon="pi pi-pencil"
                   aria-label="Edit"
                   style={{ background: "orange", border: "transparent" }}
+                  onClick={() =>
+                    showToast({
+                      severity: "warn",
+                      summary: "В разработке",
+                      detail: "Временно не доступно",
+                    })
+                  }
+                  loading={isEditLoading}
                   disabled={selectedRow === null}
                 />
                 <Button
@@ -252,6 +308,8 @@ const Home = () => {
                   icon="pi pi-trash"
                   aria-label="Delete"
                   style={{ background: "orangered", border: "transparent" }}
+                  onClick={() => setIsDeleteRowModal(true)}
+                  loading={isDeleteLoading}
                   disabled={selectedRow === null}
                 />
               </div>
@@ -281,6 +339,54 @@ const Home = () => {
               <Column field="date" header="Дата" sortable></Column>
             </DataTable>
           </div>
+          <Dialog
+            className="m-1"
+            visible={isDeleteRowModal}
+            style={{ width: "32rem" }}
+            breakpoints={{ "960px": "75vw", "641px": "90vw" }}
+            header="Подтверждение"
+            modal
+            footer={
+              <>
+                <Button
+                  label="Нет"
+                  icon="pi pi-times"
+                  onClick={() => setIsDeleteRowModal(false)}
+                  style={{
+                    background: "transparent",
+                    border: "1px solid blue",
+                    fontWeight: "500",
+                    color: "blue",
+                  }}
+                />
+                <Button
+                  label="Да"
+                  icon="pi pi-check"
+                  onClick={handleDelete}
+                  style={{
+                    background: "orangered",
+                    border: "1px solid orangered",
+                    fontWeight: "bold",
+                  }}
+                />
+              </>
+            }
+            onHide={() => setIsDeleteRowModal(false)}
+          >
+            <div>
+              <i
+                className="mb-3 mr-3 pi pi-exclamation-triangle"
+                style={{ fontSize: "2rem" }}
+              />
+              {selectedRow && (
+                <span>
+                  Вы уверены, что хотите
+                  <span className="text-red-500">удалить</span> строку <br />
+                  <b>{`${selectedRow.name} — ${selectedRow.date}`}</b>?
+                </span>
+              )}
+            </div>
+          </Dialog>
         </section>
       </main>
 
