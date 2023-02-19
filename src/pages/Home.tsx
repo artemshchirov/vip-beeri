@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
-import { InputText } from "primereact/inputtext";
-import { Calendar, CalendarChangeParams } from "primereact/calendar";
-import { Button } from "primereact/button";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
 import { Dropdown, DropdownChangeParams } from "primereact/dropdown";
+import { Calendar, CalendarChangeParams } from "primereact/calendar";
+import { InputText } from "primereact/inputtext";
+import { DataTable } from "primereact/datatable";
+import { Button } from "primereact/button";
+import { Column } from "primereact/column";
 import { Toast } from "primereact/toast";
-import { useFormik } from "formik";
 import { classNames } from "primereact/utils";
-import { doc, setDoc } from "firebase/firestore";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { onSnapshot, query } from "firebase/firestore";
+import { db } from "../firebase";
+import { useFormik } from "formik";
 import { v4 as uuid } from "uuid";
-import logo from "../assets/logo.png";
 import CustomLink from "../components/CustomLink";
-import Signin from "./Signin";
-import Signup from "./Signup";
+import logo from "../assets/logo.png";
 
 interface FormValues {
   name: string;
@@ -23,108 +23,9 @@ interface FormValues {
 interface Row {
   id: number;
   name: string;
-  date: string;
+  date: Date;
   time: string;
 }
-
-const defaultValues: Row[] = [
-  {
-    id: 10,
-    name: "Имя в таблице",
-    date: "19-01-2023, чт",
-    time: "00:25",
-  },
-  {
-    id: 11,
-    name: "Имя в таблице",
-    date: "19-01-2023, чт",
-    time: "00:25",
-  },
-  {
-    id: 12,
-    name: "Имя в таблице",
-    date: "19-01-2023, чт",
-    time: "00:25",
-  },
-  {
-    id: 13,
-    name: "Имя в таблице",
-    date: "19-01-2023, чт",
-    time: "00:25",
-  },
-  {
-    id: 14,
-    name: "Имя в таблице",
-    date: "19-01-2023, чт",
-    time: "00:25",
-  },
-  {
-    id: 15,
-    name: "Имя в таблице",
-    date: "19-01-2023, чт",
-    time: "00:25",
-  },
-  {
-    id: 16,
-    name: "Имя в таблице",
-    date: "19-01-2023, чт",
-    time: "00:25",
-  },
-  {
-    id: 17,
-    name: "Имя в таблице",
-    date: "19-01-2023, чт",
-    time: "00:25",
-  },
-  {
-    id: 18,
-    name: "Имя в таблице",
-    date: "19-01-2023, чт",
-    time: "00:25",
-  },
-  {
-    id: 19,
-    name: "Имя в таблице",
-    date: "19-01-2023, чт",
-    time: "00:25",
-  },
-  {
-    id: 20,
-    name: "Имя в таблице",
-    date: "19-01-2023, чт",
-    time: "00:25",
-  },
-  {
-    id: 21,
-    name: "Имя в таблице",
-    date: "19-01-2023, чт",
-    time: "00:25",
-  },
-  {
-    id: 22,
-    name: "Имя в таблице",
-    date: "19-01-2023, чт",
-    time: "00:25",
-  },
-];
-
-const dropdownValues: { id: number; name: string }[] = [
-  { id: 0, name: "Роман Балабанов" },
-  { id: 1, name: "Артём" },
-  { id: 2, name: "НОВОЕ ОЧЕНЬ ДЛИННОЕ БОЛЬШОЕ СЛОВО" },
-  { id: 14, name: "" },
-  { id: 3, name: "Имя" },
-  { id: 4, name: "Имя" },
-  { id: 5, name: "Имя" },
-  { id: 6, name: "Имя" },
-  { id: 7, name: "Имя" },
-  { id: 8, name: "Имя" },
-  { id: 9, name: "Имя" },
-  { id: 10, name: "Имя" },
-  { id: 11, name: "Имя" },
-  { id: 12, name: "Имя" },
-  { id: 13, name: "Имя" },
-];
 
 interface ToastOptions {
   severity: "success" | "error";
@@ -132,27 +33,23 @@ interface ToastOptions {
   detail: string;
 }
 
+interface DropdownValue {
+  id: number;
+  name: string;
+}
+
+const dropdownValues: DropdownValue[] = [
+  { id: 0, name: "Роман Балабанов" },
+  { id: 1, name: "Артём" },
+  { id: 2, name: "НОВОЕ ОЧЕНЬ ДЛИННОЕ БОЛЬШОЕ СЛОВО" },
+  { id: 3, name: "Д" },
+];
+
 const Home = () => {
-  const [selectedDate, setSelectedDate] = useState<string>("");
   const [tableRows, setTableRows] = useState<Row[]>([]);
-  const [selectedName, setSelectedName] = useState<string | undefined>("");
   const [selectedRow, setSelectedRow] = useState<Row | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const toast = useRef<Toast>(null);
-
-  useEffect(() => {
-    setTableRows(defaultValues);
-  }, []);
-
-  const showToast = ({ severity, summary, detail }: ToastOptions) => {
-    if (toast.current)
-      toast.current.show({
-        severity,
-        summary,
-        detail,
-      });
-  };
-
   const formik = useFormik<FormValues>({
     initialValues: {
       name: "",
@@ -181,27 +78,22 @@ const Home = () => {
     },
 
     onSubmit: async (data) => {
-      console.log("data ==>", data);
-
+      setLoading(true);
+      console.log("Home onSubmit data ==>", data);
       try {
-        setLoading(true);
-        // await setDoc(doc(db, "rows", res.user));
-      } catch (err: any) {
-        // TODO type
-        console.log("onSubmit", err.message);
+        await addDoc(collection(db, "rows"), {
+          id: uuid(),
+          name: formik.values.name,
+          date: formik.values.date,
+          time: Timestamp.now().toDate(),
+        });
+      } catch (err) {
+        if (err instanceof Error && typeof err.message === "string")
+          console.error("Signin error ==>", err.message);
+        else console.error("Signin error ==>", err);
       } finally {
         setLoading(false);
       }
-
-      setTableRows([
-        {
-          id: 3,
-          name: data.name,
-          date: data.date,
-          time: "00:01",
-        },
-        ...tableRows,
-      ]);
 
       showToast({
         severity: "success",
@@ -210,25 +102,59 @@ const Home = () => {
       });
 
       formik.setFieldValue("date", formik.initialValues.date);
-      setSelectedDate(formik.initialValues.date);
     },
   });
+
+  useEffect(() => {
+    fetchRows();
+  }, []);
+
+  const fetchRows = async () => {
+    setLoading(true);
+    const q = query(collection(db, "rows"));
+    try {
+      onSnapshot(q, (querySnapshot) => {
+        setTableRows(
+          querySnapshot.docs.map(
+            (doc): Row => ({
+              id: doc.data().id,
+              name: doc.data().name,
+              date: doc.data().date,
+              time: doc.data().time,
+            })
+          )
+        );
+      });
+    } catch (err) {
+      if (err instanceof Error && typeof err.message === "string")
+        console.error("Signin error ==>", err.message);
+      else console.error("Signin error ==>", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const showToast = ({ severity, summary, detail }: ToastOptions) => {
+    if (toast.current)
+      toast.current.show({
+        severity,
+        summary,
+        detail,
+      });
+  };
 
   const isFormFieldInvalid = (formName: keyof FormValues) =>
     !!(formik.touched[formName] && formik.errors[formName]);
 
   const onDropdownChange = (e: DropdownChangeParams) => {
-    const newNameId = e.value;
-    const newName = dropdownValues.find((x) => x.id === newNameId)?.name;
-    setSelectedName(newName);
+    const newName = dropdownValues.find((x) => x.name === e.value)?.name;
     formik.setFieldValue("name", newName);
-    console.log("newNameId ==>", newNameId, "newName ==>", newName);
+    console.log("newNameId ==>", e.value, "newName ==>", newName);
   };
 
   const onCalendarChange = (e: CalendarChangeParams) => {
     if (e.value instanceof Date) {
       const newDate = e.value.toLocaleString().split(", ")[0];
-      setSelectedDate(newDate);
       formik.setFieldValue("date", newDate);
       console.log("newDate ==>", newDate);
     }
@@ -256,7 +182,7 @@ const Home = () => {
           <div className="flex flex-col items-center w-full h-full xl:w-4/12 ">
             <Calendar
               className="w-full text-xs lg:w-6/12 xl:w-full xl:min-h-[435px]"
-              value={selectedDate}
+              value={formik.values.date}
               onChange={(e: CalendarChangeParams) => onCalendarChange(e)}
               inline
             />
@@ -269,13 +195,14 @@ const Home = () => {
                 <div className="w-6/12">
                   <Dropdown
                     inputId="name"
-                    value={selectedName}
+                    value={formik.values.name}
                     options={dropdownValues}
-                    optionValue="id"
+                    optionValue="name"
                     optionLabel="name"
-                    placeholder={selectedName || "Имя"}
+                    placeholder={formik.values.name || "Имя"}
                     className={classNames("w-full", {
-                      "p-invalid": isFormFieldInvalid("name") && !selectedName,
+                      "p-invalid":
+                        isFormFieldInvalid("name") && !formik.values.name,
                     })}
                     onChange={(e: DropdownChangeParams) => onDropdownChange(e)}
                   />
@@ -283,12 +210,13 @@ const Home = () => {
                 <div className="w-6/12">
                   <InputText
                     name="date"
-                    value={selectedDate}
+                    value={formik.values.date}
                     className={classNames("w-full", {
-                      "p-invalid": isFormFieldInvalid("date") && !selectedDate,
+                      "p-invalid":
+                        isFormFieldInvalid("date") && !formik.values.date,
                     })}
-                    placeholder={selectedDate || "Дата"}
-                    disabled={selectedDate === formik.initialValues.date}
+                    placeholder={formik.values.date || "Дата"}
+                    disabled={formik.values.date === formik.initialValues.date}
                     readOnly
                   />
                 </div>
@@ -300,9 +228,10 @@ const Home = () => {
                   label="Добавить"
                   icon="pi pi-check"
                   aria-label="Submit"
+                  loading={loading}
                   disabled={
-                    selectedName === formik.initialValues.name ||
-                    selectedDate === formik.initialValues.date
+                    formik.values.name === formik.initialValues.name ||
+                    formik.values.date === formik.initialValues.date
                   }
                 />
               </div>
@@ -311,7 +240,7 @@ const Home = () => {
                   className="w-6/12 whitespace-nowrap "
                   type="button"
                   label="Изменить"
-                  icon="pi pi-user"
+                  icon="pi pi-pencil"
                   aria-label="Edit"
                   style={{ background: "orange", border: "transparent" }}
                   disabled={selectedRow === null}
@@ -320,7 +249,7 @@ const Home = () => {
                   className="w-6/12 whitespace-nowrap "
                   type="button"
                   label="Удалить"
-                  icon="pi pi-times"
+                  icon="pi pi-trash"
                   aria-label="Delete"
                   style={{ background: "orangered", border: "transparent" }}
                   disabled={selectedRow === null}
