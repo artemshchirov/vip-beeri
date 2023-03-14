@@ -1,18 +1,20 @@
-# VITE X REACT X TYPESCRIPT X TAILWIND X PRIMEREACT
+# Work Calendar
 
-## Template starter for new projects
+An application that allows you to select a date and register your day off in the calendar with a notification to the director. App has additional features for admin
 
----
+## Tech
 
-[How To Set Up a React Project with Vite](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-react-project-with-vite)
+- React.js
+- TypeScript
+- Tailwind CSS
+- Primereact
+- Firebase
+- Formik
 
-[How To Set Up a React TypeScript Project With Tailwind CSS](https://dev.to/ethand91/creating-a-react-app-with-typescript-tailwind-support-18b8)
+## TODO
 
-[How To Set Up a React TypeScript Tailwind CSS Project With Primereact](https://www.primefaces.org/primereact/setup/)
-
----
-
-```bash
-yarn
-yarn dev
-```
+- [x] Time row added
+- [x] Column with notes
+- [x] Delete button for admin
+- [ ] Sort by date, not numbers
+- [ ] Edit button for admin
