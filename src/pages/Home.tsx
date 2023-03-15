@@ -92,7 +92,7 @@ const Home = () => {
 					name: formik.values.name,
 					date: formik.values.date,
 					note: formik.values.note,
-					time: Timestamp.now().toDate().toLocaleDateString([], {
+					time: Timestamp.now().toDate().toLocaleDateString("en-US", {
 						hour: "2-digit",
 						minute: "2-digit",
 						hour12: false,
@@ -184,9 +184,9 @@ const Home = () => {
 	const onCalendarChange = (e: CalendarChangeParams) => {
 		if (e.value instanceof Date) {
 			const date = e.value;
-			const newDate = `${date.getDate()} ${date.toLocaleDateString([], {
+			const newDate = `${date.getDate()} ${date.toLocaleDateString("en-US", {
 				month: "long",
-			})}, ${date.toLocaleDateString([], { weekday: "long" })}`;
+			})}, ${date.toLocaleDateString("en-US", { weekday: "long" })}`;
 
 			formik.setFieldValue("date", newDate);
 		}
