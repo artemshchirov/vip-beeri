@@ -92,13 +92,16 @@ const Home = () => {
 					name: formik.values.name,
 					date: formik.values.date,
 					note: formik.values.note,
-					time: Timestamp.now().toDate().toLocaleDateString("en-US", {
-						hour: "2-digit",
-						minute: "2-digit",
-						hour12: false,
-						day: "2-digit",
-						month: "2-digit",
-					}),
+					time: `${Timestamp.now()
+						.toDate()
+						.toLocaleDateString("en-US", { day: "2-digit" })}/${Timestamp.now()
+						.toDate()
+						.toLocaleDateString("en-US", {
+							hour: "2-digit",
+							minute: "2-digit",
+							hour12: false,
+							month: "2-digit",
+						})}`,
 				});
 
 				showToast({
@@ -230,7 +233,7 @@ const Home = () => {
 				<nav className="container flex flex-wrap items-center justify-between mx-auto">
 					<a className="flex items-center" href="#">
 						<img src={logo} className="h-6 mr-3 sm:h-9" alt="App Logo" />
-						<h1 className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
+						<h1 className="self-center text-xl font-semibold whitespace-nowrap text-black dark:text-white">
 							VIP
 						</h1>
 					</a>
@@ -243,6 +246,7 @@ const Home = () => {
 							className="w-full text-xs lg:w-6/12 xl:w-full xl:min-h-[435px]"
 							value={formik.values.date}
 							onChange={(e: CalendarChangeParams) => onCalendarChange(e)}
+							minDate={new Date()}
 							inline
 						/>
 						<form
@@ -355,21 +359,30 @@ const Home = () => {
 							alwaysShowPaginator={false}
 							emptyMessage="No data available"
 							paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+							size="large"
+							loading={!!!tableRows.length}
 						>
 							<Column
 								field="name"
 								header="Name"
 								sortable
-								style={{ width: "19%" }}
+								style={{ width: "auto" }}
 							/>
 							<Column
 								field="date"
 								header="Date"
-								style={{ width: "23%" }}
+								style={{ width: "auto" }}
 								sortable
 							/>
-							<Column field="note" header="Note" style={{ width: "auto" }} />
-							<Column field="time" header="Time" style={{ width: "19%" }} />
+							{tableRows.some(row => row.note) && (
+								<Column field="note" header="Note" style={{ width: "auto" }} />
+							)}
+							<Column
+								field="time"
+								header="Time"
+								style={{ width: "auto" }}
+								sortable
+							/>
 						</DataTable>
 					</div>
 					<Dialog
