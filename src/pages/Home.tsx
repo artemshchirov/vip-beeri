@@ -24,6 +24,9 @@ import CustomLink from "../components/CustomLink";
 import { db } from "../firebase";
 import { dropdownValues } from "../utils/constants";
 
+import "primereact/resources/themes/saga-green/theme.css";
+// import "primereact/resources/themes/vela-blue/theme.css";
+
 interface FormValues {
 	name: string;
 	date: string;
@@ -69,14 +72,14 @@ const Home = () => {
 		validate: data => {
 			let errors: { [key: string]: string } = {};
 
-			if (!data.name) errors.name = "Name not selected";
-			if (!data.date) errors.date = "Date not selected";
+			if (!data.name) errors.name = "Name is not selected";
+			if (!data.date) errors.date = "Date is not selected";
 
 			if (Object.keys(errors).length > 0) {
 				showToast({
 					severity: "error",
-					summary: "Table not updated",
-					detail: Object.values(errors).join(", "),
+					summary: "Table is not updated",
+					detail: Object.values(errors).join(","),
 				});
 				return errors;
 			}
@@ -92,18 +95,21 @@ const Home = () => {
 					name: formik.values.name,
 					date: formik.values.date,
 					note: formik.values.note,
-					time: Timestamp.now().toDate().toLocaleDateString("en-US", {
-						hour: "2-digit",
-						minute: "2-digit",
-						hour12: false,
-						day: "2-digit",
-						month: "2-digit",
-					}),
+					time: `${Timestamp.now()
+						.toDate()
+						.toLocaleDateString("en-US", { day: "2-digit" })}/${Timestamp.now()
+						.toDate()
+						.toLocaleDateString("en-US", {
+							hour: "2-digit",
+							minute: "2-digit",
+							hour12: false,
+							month: "2-digit",
+						})}`,
 				});
 
 				showToast({
 					severity: "success",
-					summary: "Table updated",
+					summary: "Table was updated",
 					detail: `${data.name} — ${data.date}`,
 				});
 			} catch (err) {
@@ -113,7 +119,7 @@ const Home = () => {
 
 				showToast({
 					severity: "error",
-					summary: "Table not updated",
+					summary: "Table is not updated",
 					detail: `Error adding ${data.name} — ${data.date}`,
 				});
 			} finally {
@@ -206,7 +212,7 @@ const Home = () => {
 				await deleteDoc(rowDocRef);
 				showToast({
 					severity: "info",
-					summary: "Table updated",
+					summary: "Table was updated",
 					detail: `Deleted ${selectedRow.name} — ${selectedRow.date}`,
 				});
 				setSelectedRow(null);
@@ -216,7 +222,7 @@ const Home = () => {
 				else console.error("Home handleDelete error ==>", err);
 				showToast({
 					severity: "error",
-					summary: "Table not updated",
+					summary: "Table is not updated",
 					detail: `Error deleting ${selectedRow.name} — ${selectedRow.date}`,
 				});
 			}
@@ -230,7 +236,7 @@ const Home = () => {
 				<nav className="container flex flex-wrap items-center justify-between mx-auto">
 					<a className="flex items-center" href="#">
 						<img src={logo} className="h-6 mr-3 sm:h-9" alt="App Logo" />
-						<h1 className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
+						<h1 className="self-center text-xl font-semibold whitespace-nowrap text-black dark:text-white">
 							VIP
 						</h1>
 					</a>
@@ -240,9 +246,10 @@ const Home = () => {
 				<section className="container xl:h-[596px] flex flex-wrap xl:justify-evenly">
 					<div className="flex flex-col items-center w-full h-full xl:w-4/12 ">
 						<Calendar
-							className="w-full text-xs lg:w-6/12 xl:w-full xl:min-h-[435px]"
+							className=" w-full text-xs lg:w-6/12 xl:w-full xl:min-h-[435px]"
 							value={formik.values.date}
 							onChange={(e: CalendarChangeParams) => onCalendarChange(e)}
+							minDate={new Date()}
 							inline
 						/>
 						<form
@@ -355,21 +362,36 @@ const Home = () => {
 							alwaysShowPaginator={false}
 							emptyMessage="No data available"
 							paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+							size="large"
+							loading={!!!tableRows.length}
+							style={{
+								background: "#f8f9fa",
+								borderWidth: "1px 0 0 0",
+								transition: "box-shadow 0.2s",
+								overflow: "hidden",
+							}}
 						>
 							<Column
 								field="name"
 								header="Name"
 								sortable
-								style={{ width: "19%" }}
+								style={{ width: "auto" }}
 							/>
 							<Column
 								field="date"
 								header="Date"
-								style={{ width: "23%" }}
+								style={{ width: "auto" }}
 								sortable
 							/>
-							<Column field="note" header="Note" style={{ width: "auto" }} />
-							<Column field="time" header="Time" style={{ width: "19%" }} />
+							{tableRows.some(row => row.note) && (
+								<Column field="note" header="Note" style={{ width: "auto" }} />
+							)}
+							<Column
+								field="time"
+								header="Time"
+								style={{ width: "auto" }}
+								sortable
+							/>
 						</DataTable>
 					</div>
 					<Dialog
