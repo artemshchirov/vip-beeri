@@ -24,7 +24,7 @@ import CustomLink from "../components/CustomLink";
 import { db } from "../firebase";
 import { dropdownValues } from "../utils/constants";
 
-import "primereact/resources/themes/saga-green/theme.css";
+// dark theme
 // import "primereact/resources/themes/vela-blue/theme.css";
 
 interface FormValues {
