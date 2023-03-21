@@ -24,6 +24,9 @@ import CustomLink from "../components/CustomLink";
 import { db } from "../firebase";
 import { dropdownValues } from "../utils/constants";
 
+import "primereact/resources/themes/saga-green/theme.css";
+// import "primereact/resources/themes/vela-blue/theme.css";
+
 interface FormValues {
 	name: string;
 	date: string;
@@ -69,14 +72,14 @@ const Home = () => {
 		validate: data => {
 			let errors: { [key: string]: string } = {};
 
-			if (!data.name) errors.name = "Name not selected";
-			if (!data.date) errors.date = "Date not selected";
+			if (!data.name) errors.name = "Name is not selected";
+			if (!data.date) errors.date = "Date is not selected";
 
 			if (Object.keys(errors).length > 0) {
 				showToast({
 					severity: "error",
-					summary: "Table not updated",
-					detail: Object.values(errors).join(", "),
+					summary: "Table is not updated",
+					detail: Object.values(errors).join(","),
 				});
 				return errors;
 			}
@@ -106,7 +109,7 @@ const Home = () => {
 
 				showToast({
 					severity: "success",
-					summary: "Table updated",
+					summary: "Table was updated",
 					detail: `${data.name} — ${data.date}`,
 				});
 			} catch (err) {
@@ -116,7 +119,7 @@ const Home = () => {
 
 				showToast({
 					severity: "error",
-					summary: "Table not updated",
+					summary: "Table is not updated",
 					detail: `Error adding ${data.name} — ${data.date}`,
 				});
 			} finally {
@@ -209,7 +212,7 @@ const Home = () => {
 				await deleteDoc(rowDocRef);
 				showToast({
 					severity: "info",
-					summary: "Table updated",
+					summary: "Table was updated",
 					detail: `Deleted ${selectedRow.name} — ${selectedRow.date}`,
 				});
 				setSelectedRow(null);
@@ -219,7 +222,7 @@ const Home = () => {
 				else console.error("Home handleDelete error ==>", err);
 				showToast({
 					severity: "error",
-					summary: "Table not updated",
+					summary: "Table is not updated",
 					detail: `Error deleting ${selectedRow.name} — ${selectedRow.date}`,
 				});
 			}
@@ -243,7 +246,7 @@ const Home = () => {
 				<section className="container xl:h-[596px] flex flex-wrap xl:justify-evenly">
 					<div className="flex flex-col items-center w-full h-full xl:w-4/12 ">
 						<Calendar
-							className="w-full text-xs lg:w-6/12 xl:w-full xl:min-h-[435px]"
+							className=" w-full text-xs lg:w-6/12 xl:w-full xl:min-h-[435px]"
 							value={formik.values.date}
 							onChange={(e: CalendarChangeParams) => onCalendarChange(e)}
 							minDate={new Date()}
@@ -361,6 +364,12 @@ const Home = () => {
 							paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
 							size="large"
 							loading={!!!tableRows.length}
+							style={{
+								background: "#f8f9fa",
+								borderWidth: "1px 0 0 0",
+								transition: "box-shadow 0.2s",
+								overflow: "hidden",
+							}}
 						>
 							<Column
 								field="name"
