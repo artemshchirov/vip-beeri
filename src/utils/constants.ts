@@ -18,5 +18,6 @@ export const dropdownValues: DropdownValue[] = [
   { id: 10, name: "Mihael Kadimov" },
   { id: 11, name: "Noa Avram" },
   { id: 12, name: "Liel Batito" },
-  { id: 13, name: "Roman Balabanov" },
+  { id: 13, name: 'Zead' },
+  { id: 14, name: "Roman Balabanov" },
 ];
