@@ -1,9 +1,11 @@
-import { FC, lazy, Suspense, useContext } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { FC, lazy, Suspense } from "react";
+import { Route, Routes } from "react-router-dom";
 import Spinner from "./components/ui/Spinner";
+import Calendar from "./pages/Calendar";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
-import { AuthContext } from "./context/AuthContext";
+
+import { events } from "./utils/constants";
 
 const Home = lazy(() => import("./pages/Home"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -25,6 +27,7 @@ const App: FC = () => {
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
+        <Route path="/calendar" element={<Calendar events={events} />} />
         <Route path="/" element={<Home />} />
         {/* <Route
           path="/"

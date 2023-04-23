@@ -1,4 +1,3 @@
-
 interface DropdownValue {
   id: number;
   name: string;
@@ -20,4 +19,15 @@ export const dropdownValues: DropdownValue[] = [
   { id: 12, name: "Liel Batito" },
   { id: 13, name: 'Zead' },
   { id: 14, name: "Roman Balabanov" },
+];
+
+export interface Event {
+  date: string;
+  name: string;
+}
+
+export const events: Event[] = [
+  { date: "2023-03-21", name: "Name1" },
+  { date: "2023-03-22", name: "Name2" },
+  { date: "2023-03-25", name: "Name3" },
 ];
