@@ -1,17 +1,18 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
-import { BrowserRouter as Router } from "react-router-dom";
-import { AuthContextProvider } from "./context/AuthContext";
+import './style/custom.css';
+import './style/index.css';
+// WARN: prime* imports always last
+import 'primeicons/primeicons.css';
+import 'primereact/resources/primereact.min.css';
+import 'primereact/resources/themes/saga-blue/theme.css';
 
-import "./style/index.css";
-import "./style/custom.css";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter as Router } from 'react-router-dom';
 
-import "primereact/resources/themes/saga-blue/theme.css";
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
+import App from './App';
+import { AuthContextProvider } from './context/AuthContext';
 
-const rootElement = document.getElementById("root") as HTMLElement;
+const rootElement = document.getElementById('root') as HTMLElement;
 ReactDOM.createRoot(rootElement).render(
   <AuthContextProvider>
     <React.StrictMode>

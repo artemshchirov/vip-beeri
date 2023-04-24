@@ -1,5 +1,4 @@
 export class LocalStorage {
-
   item: any;
   startValue: string;
 

@@ -8,16 +8,11 @@ interface CustomLinkProps {
   activeClassName?: string;
 }
 
-const CustomLink = ({
-  href,
-  children,
-  className,
-  activeClassName,
-}: CustomLinkProps): JSX.Element => {
+const CustomLink = ({ href, children, className, activeClassName }: CustomLinkProps): JSX.Element => {
   if (href.startsWith('http')) {
     return (
       <>
-        <a href={href} className={className} target="_blank" rel="noreferrer">
+        <a className={className} href={href} rel='noreferrer' target='_blank'>
           {children}
         </a>
       </>
@@ -37,12 +32,7 @@ const CustomLink = ({
   if (activeClassName) {
     return (
       <>
-        <NavLink
-          to={href}
-          className={({ isActive }) =>
-            `${className} ${isActive ? activeClassName : ''}`
-          }
-        >
+        <NavLink className={({ isActive }) => `${className} ${isActive ? activeClassName : ''}`} to={href}>
           {children}
         </NavLink>
       </>
@@ -51,7 +41,7 @@ const CustomLink = ({
 
   return (
     <>
-      <Link to={href} className={className}>
+      <Link className={className} to={href}>
         {children}
       </Link>
     </>

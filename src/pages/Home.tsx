@@ -1,25 +1,18 @@
-import {
-  Timestamp,
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  query,
-} from "firebase/firestore";
-import { useFormik } from "formik";
-import { Calendar, CalendarChangeParams } from "primereact/calendar";
+import { addDoc, collection, deleteDoc, doc, onSnapshot, query, Timestamp } from 'firebase/firestore';
+import { useFormik } from 'formik';
+import { Calendar, CalendarChangeParams } from 'primereact/calendar';
 // TODO: rename DropdownChangeParams
-import { DropdownChangeParams } from "primereact/dropdown";
-import { Toast } from "primereact/toast";
-import { useEffect, useRef, useState } from "react";
-import { v4 as uuid } from "uuid";
-import { db } from "../firebase";
-import { dropdownValues } from "../utils/constants";
+import { DropdownChangeParams } from 'primereact/dropdown';
+import { Toast } from 'primereact/toast';
+import React, { useEffect, useRef, useState } from 'react';
+import { v4 as uuid } from 'uuid';
+
 import AddRowForm from '../components/AddRowForm';
-import DialogRowDelete from '../components/DialogRowDelete';
+import DeleteRowPopup from '../components/DeleteRowPopup';
 import EmployeeTable from '../components/EmployeeTable';
+import { db } from '../firebase';
 import Page from '../layouts/Page';
+import { dropdownValues } from '../utils/constants';
 
 // dark theme
 // import "primereact/resources/themes/vela-blue/theme.css";
@@ -39,7 +32,7 @@ export interface TableRow {
 }
 
 export interface ToastOptions {
-  severity: "success" | "info" | "warn" | "error";
+  severity: 'success' | 'info' | 'warn' | 'error';
   summary: string;
   detail: string;
 }
@@ -58,25 +51,25 @@ const Home = () => {
   const toast = useRef<Toast>(null);
   const formik = useFormik<FormValues>({
     initialValues: {
-      name: "",
-      date: "",
-      note: "",
+      name: '',
+      date: '',
+      note: '',
     },
 
     validateOnChange: false,
     validateOnBlur: true,
 
-    validate: data => {
-      let errors: { [key: string]: string } = {};
+    validate: (data) => {
+      const errors: { [key: string]: string } = {};
 
-      if (!data.name) errors.name = "Name is not selected";
-      if (!data.date) errors.date = "Date is not selected";
+      if (!data.name) errors.name = 'Name is not selected';
+      if (!data.date) errors.date = 'Date is not selected';
 
       if (Object.keys(errors).length > 0) {
         showToast({
-          severity: "error",
-          summary: "Table is not updated",
-          detail: Object.values(errors).join(","),
+          severity: 'error',
+          summary: 'Table is not updated',
+          detail: Object.values(errors).join(','),
         });
         return errors;
       }
@@ -84,45 +77,43 @@ const Home = () => {
       return {};
     },
 
-    onSubmit: async data => {
+    onSubmit: async (data) => {
       setIsSubmitLoading(true);
       try {
-        await addDoc(collection(db, "table"), {
+        await addDoc(collection(db, 'table'), {
           id: uuid(),
           name: formik.values.name,
           date: formik.values.date,
           note: formik.values.note,
-          time: `${Timestamp.now()
+          time: `${Timestamp.now().toDate().toLocaleDateString('en-US', { day: '2-digit' })}/${Timestamp.now()
             .toDate()
-            .toLocaleDateString("en-US", { day: "2-digit" })}/${Timestamp.now()
-            .toDate()
-            .toLocaleDateString("en-US", {
-              hour: "2-digit",
-              minute: "2-digit",
+            .toLocaleDateString('en-US', {
+              hour: '2-digit',
+              minute: '2-digit',
               hour12: false,
-              month: "2-digit",
+              month: '2-digit',
             })}`,
         });
         showToast({
-          severity: "success",
-          summary: "Table was updated",
+          severity: 'success',
+          summary: 'Table was updated',
           detail: `${data.name} — ${data.date}`,
         });
       } catch (err) {
-        if (err instanceof Error && typeof err.message === "string")
-          console.error("Home onSubmit error ==>", err.message);
-        else console.error("Home onSubmit error ==>", err);
+        if (err instanceof Error && typeof err.message === 'string')
+          console.error('Home onSubmit error ==>', err.message);
+        else console.error('Home onSubmit error ==>', err);
 
         showToast({
-          severity: "error",
-          summary: "Table is not updated",
+          severity: 'error',
+          summary: 'Table is not updated',
           detail: `Error adding ${data.name} — ${data.date}`,
         });
       } finally {
         setIsSubmitLoading(false);
       }
 
-      formik.setFieldValue("date", formik.initialValues.date);
+      formik.setFieldValue('date', formik.initialValues.date);
     },
   });
 
@@ -131,19 +122,17 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      formik.values.name === "Roman Balabanov" &&
-      formik.values.note === "Inspector"
-    ) {
-      setIsDeleteBtnVisible(prev => !prev);
-      formik.setFieldValue("note", "");
+    if (formik.values.name === 'Roman Balabanov' && formik.values.note === 'Inspector') {
+      setIsDeleteBtnVisible((prev) => !prev);
+      formik.setFieldValue('note', '');
     }
   }, [formik.values.name, formik.values.note]);
+
   const fetchRows = async () => {
     setIsLoading(true);
-    const q = query(collection(db, "table"));
+    const q = query(collection(db, 'table'));
     try {
-      onSnapshot(q, querySnapshot => {
+      onSnapshot(q, (querySnapshot) => {
         setTableRows(
           querySnapshot.docs.map(
             (doc): TableRow => ({
@@ -155,13 +144,12 @@ const Home = () => {
             })
           )
         );
+        setIsLoading(false);
       });
     } catch (err) {
-      if (err instanceof Error && typeof err.message === "string")
-        console.error("Home fetchRows error ==>", err.message);
-      else console.error("Home fetchRows error ==>", err);
-    } finally {
-      setIsLoading(false);
+      if (err instanceof Error && typeof err.message === 'string')
+        console.error('Home fetchRows error ==>', err.message);
+      else console.error('Home fetchRows error ==>', err);
     }
   };
 
@@ -174,27 +162,26 @@ const Home = () => {
       });
   };
 
-  const isFormFieldInvalid = (formName: keyof FormValues) =>
-    !!(formik.touched[formName] && formik.errors[formName]);
+  const isFormFieldInvalid = (formName: keyof FormValues) => !!(formik.touched[formName] && formik.errors[formName]);
 
   const handleDropdownChange = (e: DropdownChangeParams) => {
-    const newName = dropdownValues.find(x => x.name === e.value)?.name;
-    formik.setFieldValue("name", newName);
+    const newName = dropdownValues.find((x) => x.name === e.value)?.name;
+    formik.setFieldValue('name', newName);
   };
 
   const onCalendarChange = (e: CalendarChangeParams) => {
     if (e.value instanceof Date) {
       const date = e.value;
-      const newDate = `${date.getDate()} ${date.toLocaleDateString("en-US", {
-        month: "long",
-      })}, ${date.toLocaleDateString("en-US", { weekday: "long" })}`;
+      const newDate = `${date.getDate()} ${date.toLocaleDateString('en-US', {
+        month: 'long',
+      })}, ${date.toLocaleDateString('en-US', { weekday: 'long' })}`;
 
-      formik.setFieldValue("date", newDate);
+      formik.setFieldValue('date', newDate);
     }
   };
 
   const handleNoteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    formik.setFieldValue("note", e.target.value);
+    formik.setFieldValue('note', e.target.value);
   };
 
   const handleDelete = async () => {
@@ -202,22 +189,22 @@ const Home = () => {
     setIsDeleteRowModal(false);
 
     if (selectedRow) {
-      const rowDocRef = doc(db, "table", selectedRow.id);
+      const rowDocRef = doc(db, 'table', selectedRow.id);
       try {
         await deleteDoc(rowDocRef);
         showToast({
-          severity: "info",
-          summary: "Table was updated",
+          severity: 'info',
+          summary: 'Table was updated',
           detail: `Deleted ${selectedRow.name} — ${selectedRow.date}`,
         });
         setSelectedRow(null);
       } catch (err) {
-        if (err instanceof Error && typeof err.message === "string")
-          console.error("Home handleDelete error ==>", err.message);
-        else console.error("Home handleDelete error ==>", err);
+        if (err instanceof Error && typeof err.message === 'string')
+          console.error('Home handleDelete error ==>', err.message);
+        else console.error('Home handleDelete error ==>', err);
         showToast({
-          severity: "error",
-          summary: "Table is not updated",
+          severity: 'error',
+          summary: 'Table is not updated',
           detail: `Error deleting ${selectedRow.name} — ${selectedRow.date}`,
         });
       }
@@ -225,46 +212,54 @@ const Home = () => {
     setIsDeleteLoading(false);
   };
 
+  // TODO: handleEdit
+  // const handleEdit = async () => {
+  //   setIsEditLoading(true);
+  //   console.log('Editing...');
+  //   setIsEditLoading(false);
+  // };
+
   return (
     <Page>
-      <section className="container xl:h-[596px] flex flex-wrap xl:justify-evenly">
-        <div className="flex flex-col items-center w-full h-full xl:w-4/12 ">
+      <section className='container xl:h-[596px] flex flex-wrap xl:justify-evenly'>
+        <div className='flex flex-col items-center w-full h-full xl:w-4/12 '>
           <Calendar
-            className=" w-full text-xs lg:w-6/12 xl:w-full xl:min-h-[435px]"
-            value={formik.values.date}
-            onChange={(e: CalendarChangeParams) => onCalendarChange(e)}
-            minDate={new Date()}
+            className='w-full text-xs lg:w-6/12 xl:w-full xl:min-h-[435px]'
             inline
+            minDate={new Date()}
+            onChange={(e: CalendarChangeParams) => onCalendarChange(e)}
+            value={formik.values.date}
           />
           <AddRowForm
             formik={formik}
-            isSubmitLoading={isSubmitLoading}
-            isFormFieldInvalid={isFormFieldInvalid}
-            onDropdownChange={handleDropdownChange}
             isDeleteBtnVisible={isDeleteBtnVisible}
-            showToast={showToast}
+            isDeleteLoading={isDeleteLoading}
             isEditLoading={isEditLoading}
+            isFormFieldInvalid={isFormFieldInvalid}
+            isSubmitLoading={isSubmitLoading}
+            onDropdownChange={handleDropdownChange}
+            onNoteChange={handleNoteChange}
             selectedRow={selectedRow}
             setIsDeleteRowModal={setIsDeleteRowModal}
-            isDeleteLoading={isDeleteLoading}
-            onNoteChange={handleNoteChange}
+            showToast={showToast}
           />
         </div>
-        <div className="flex justify-center w-full xl:w-7/12">
+        <div className='flex justify-center w-full xl:w-7/12'>
           <EmployeeTable
-            tableRows={tableRows}
+            isLoading={isLoading}
             selectedRow={selectedRow}
             setSelectedRow={setSelectedRow}
+            tableRows={tableRows}
           />
         </div>
       </section>
-      <DialogRowDelete
-        isDeleteRowModal={isDeleteRowModal}
-        setIsDeleteRowModal={setIsDeleteRowModal}
-        selectedRow={selectedRow}
+      <DeleteRowPopup
         handleDelete={handleDelete}
+        isDeleteRowModal={isDeleteRowModal}
+        selectedRow={selectedRow}
+        setIsDeleteRowModal={setIsDeleteRowModal}
       />
-      <Toast ref={toast} className="pl-5" baseZIndex={2000} />
+      <Toast baseZIndex={2000} className='pl-5' ref={toast} />
     </Page>
   );
 };
