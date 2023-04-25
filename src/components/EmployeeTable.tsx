@@ -2,7 +2,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React from 'react';
 
-import { TableRow } from '../pages/Home';
+import { TableRow } from '../pages/Home/Home';
 
 interface EmployeeTableProps {
   isLoading: boolean;

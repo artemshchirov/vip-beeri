@@ -13,6 +13,7 @@ export class LocalStorage {
 
   load() {
     const data = localStorage.getItem(this.item);
+
     return data ? JSON.parse(data) : this.startValue;
   }
 

@@ -13,6 +13,7 @@ import App from './App';
 import { AuthContextProvider } from './context/AuthContext';
 
 const rootElement = document.getElementById('root') as HTMLElement;
+
 ReactDOM.createRoot(rootElement).render(
   <AuthContextProvider>
     <React.StrictMode>

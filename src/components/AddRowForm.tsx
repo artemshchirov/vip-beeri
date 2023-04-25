@@ -5,14 +5,13 @@ import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
 import React from 'react';
 
-import { FormValues, TableRow, ToastOptions } from '../pages/Home';
+import { FormValues, TableRow, ToastOptions } from '../pages/Home/Home';
 import { dropdownValues } from '../utils/constants';
 
 interface AddRowFormProps {
   formik: FormikValues;
   isSubmitLoading: boolean;
-  isDeleteBtnVisible: boolean;
-  isEditLoading: boolean;
+  isInspectorVisible: boolean;
   setIsDeleteRowModal: React.Dispatch<React.SetStateAction<boolean>>;
   isDeleteLoading: boolean;
   isFormFieldInvalid: (formName: keyof FormValues) => boolean;
@@ -25,11 +24,10 @@ interface AddRowFormProps {
 const AddRowForm = ({
   formik,
   isSubmitLoading,
-  isDeleteBtnVisible,
+  isInspectorVisible,
   isFormFieldInvalid,
   onDropdownChange,
   showToast,
-  isEditLoading,
   selectedRow,
   setIsDeleteRowModal,
   isDeleteLoading,
@@ -80,7 +78,7 @@ const AddRowForm = ({
         />
       </div>
       <div className='flex justify-between w-full gap-2 mt-2'>
-        {isDeleteBtnVisible ? (
+        {isInspectorVisible ? (
           <>
             <Button
               aria-label='Edit'
@@ -88,7 +86,6 @@ const AddRowForm = ({
               disabled={selectedRow === null}
               icon='pi pi-pencil'
               label='Edit'
-              loading={isEditLoading}
               onClick={() =>
                 showToast({
                   severity: 'warn',

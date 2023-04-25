@@ -4,7 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import Spinner from './components/ui/Spinner';
 import { events } from './utils/constants';
 
-const Home = lazy(() => import('./pages/Home'));
+const Home = lazy(() => import('./pages/Home/Home'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const Signin = lazy(() => import('./pages/Signin'));
 const Signup = lazy(() => import('./pages/Signup'));

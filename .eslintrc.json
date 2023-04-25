@@ -22,6 +22,7 @@
     "project": "./tsconfig.json"
   },
   "plugins": ["simple-import-sort", "import", "@typescript-eslint", "prettier"],
+  "root": true,
   "rules": {
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-empty-interface": [

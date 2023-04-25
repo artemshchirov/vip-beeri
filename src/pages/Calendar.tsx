@@ -18,13 +18,13 @@ const Calendar = ({ events }: CalendarProps) => {
     monthStart.getDate() - monthStart.getDay()
   );
   const endDate = new Date(monthEnd.getFullYear(), monthEnd.getMonth(), monthEnd.getDate() + (6 - monthEnd.getDay()));
-
   const weeks: Date[][] = [];
 
   for (let d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
     const week =
       weeks[Math.floor((d.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 7))] ||
       (weeks[Math.floor((d.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 7))] = []);
+
     week.push(new Date(d));
   }
 

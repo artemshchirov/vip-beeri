@@ -2,7 +2,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Button } from 'primereact/button';
 import { Checkbox } from 'primereact/checkbox';
 import { InputText } from 'primereact/inputtext';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import logo from '../assets/logo.png';
@@ -13,12 +13,12 @@ const Signin = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [checked, setChecked] = useState<boolean>(false);
   const navigate = useNavigate();
-
   const onSubmit = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
     const email = e.target[0].value;
     const password = e.target[1].value;
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate('/');

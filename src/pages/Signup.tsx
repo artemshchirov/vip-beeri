@@ -14,7 +14,6 @@ const Signup = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [checked, setChecked] = useState<boolean>(false);
   const navigate = useNavigate();
-
   // TODO fix any
   const onSubmit = async (e: any) => {
     e.preventDefault();
@@ -22,14 +21,15 @@ const Signup = () => {
     const displayName = e.target[0].value;
     const email = e.target[1].value;
     const password = e.target[2].value;
+
     // const file = e.target[3].files[0];
     console.log('Signup onSubmit displayName:', displayName);
     console.log('Signup onSubmit email:', email);
     console.log('Signup onSubmit password:', password);
-
     try {
       // Create user
       const res = await createUserWithEmailAndPassword(auth, email, password);
+
       console.log('res ==>', res);
       await setDoc(doc(db, 'users', res.user.uid), {
         uid: res.user.uid,
