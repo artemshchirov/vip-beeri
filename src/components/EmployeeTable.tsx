@@ -1,4 +1,4 @@
-import { Column } from 'primereact/column';
+import { Column, ColumnSortParams } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React from 'react';
 
@@ -9,9 +9,10 @@ interface EmployeeTableProps {
   tableRows: TableRow[];
   selectedRow: TableRow | null;
   setSelectedRow: React.Dispatch<React.SetStateAction<TableRow | null>>;
+  onSort: (rows: TableRow[], field: string, order: boolean) => TableRow[];
 }
 
-const EmployeeTable = ({ isLoading, tableRows, selectedRow, setSelectedRow }: EmployeeTableProps) => {
+const EmployeeTable = ({ isLoading, tableRows, selectedRow, setSelectedRow, onSort }: EmployeeTableProps) => {
   return (
     <DataTable
       alwaysShowPaginator={false}
@@ -27,6 +28,7 @@ const EmployeeTable = ({ isLoading, tableRows, selectedRow, setSelectedRow }: Em
       selection={selectedRow}
       selectionMode='single'
       size='large'
+      sortOrder={1}
       style={{
         background: '#f8f9fa',
         borderWidth: '1px 0 0 0',
@@ -36,7 +38,16 @@ const EmployeeTable = ({ isLoading, tableRows, selectedRow, setSelectedRow }: Em
       value={tableRows}
     >
       <Column field='name' header='Name' sortable style={{ width: 'auto' }} />
-      <Column field='date' header='Date' sortable style={{ width: 'auto' }} />
+      <Column
+        field='date'
+        header='Date'
+        sortable
+        sortFunction={(e: ColumnSortParams) => {
+          const { field, order } = e;
+          return onSort(e.data, field, order === -1);
+        }}
+        style={{ width: 'auto' }}
+      />
       {tableRows.some((row) => row.note) && <Column field='note' header='Note' style={{ width: 'auto' }} />}
       <Column field='time' header='Time' sortable style={{ width: 'auto' }} />
     </DataTable>

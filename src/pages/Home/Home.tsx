@@ -57,7 +57,7 @@ const Home = () => {
     const fetchAndSetTableRows = async () => {
       try {
         const rows = await fetchRows();
-        setTableRows(rows);
+        setTableRows(handleSortRowsByDate(rows, 'date', true));
       } catch (error) {
         console.error('Error fetching rows:', error);
       } finally {
@@ -93,6 +93,32 @@ const Home = () => {
     formik.setFieldValue('note', e.target.value);
   };
 
+  const handleSortRowsByDate = (rows: TableRow[], field: string, order: boolean) => {
+    console.log('field:', field, 'order:', order);
+    const sorted = [...rows].sort((a, b) => {
+      const dayStr = a.date.split(', ')[0];
+      const [day, month] = dayStr.split(' ');
+      const year = new Date().getFullYear(); // assuming the year is the current year
+      const isoDateStr = `${year}-${month}-${day.padStart(2, '0')}`;
+
+      const dayStrB = b.date.split(', ')[0];
+      const [dayB, monthB] = dayStrB.split(' ');
+      const yearB = new Date().getFullYear(); // assuming the year is the current year
+      const isoDateStrB = `${yearB}-${monthB}-${dayB.padStart(2, '0')}`;
+
+      const dateA = new Date(isoDateStr).getTime();
+      const dateB = new Date(isoDateStrB).getTime();
+
+      if (order) {
+        return dateA - dateB;
+      } else {
+        return dateB - dateA;
+      }
+    });
+
+    return sorted;
+  };
+
   return (
     <Page>
       <section className='container xl:h-[596px] flex flex-wrap xl:justify-evenly'>
@@ -120,6 +146,7 @@ const Home = () => {
         <div className='flex justify-center w-full xl:w-7/12'>
           <EmployeeTable
             isLoading={isLoading}
+            onSort={handleSortRowsByDate}
             selectedRow={selectedRow}
             setSelectedRow={setSelectedRow}
             tableRows={tableRows}
