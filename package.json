@@ -16,23 +16,24 @@
     "lint:fix": "eslint --fix src/**/*.{tsx,ts} --config ./.eslintrc.json --ignore-path ./.gitignore"
   },
   "dependencies": {
-    "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.1",
     "@types/uuid": "^9.0.0",
     "date-fns": "^2.29.3",
     "firebase": "^9.17.1",
     "formik": "^2.2.9",
+    "postcss": "^8.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.5",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^27.4.0",
+    "@types/babel__core": "^7.20.0",
     "@typescript-eslint/eslint-plugin": "^5.55.0",
     "@typescript-eslint/parser": "^5.59.0",
     "@vitejs/plugin-react": "^2.2.0",
-    "autoprefixer": "^10.4.13",
+    "autoprefixer": "^10.4.14",
     "eslint": "^8.3.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.27.5",
@@ -42,12 +43,11 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
-    "jest": "^27.4.5",
     "postcss-cli": "^10.1.0",
     "prettier": "^2.3.2",
     "primeicons": "^6.0.1",
     "primereact": "^8.7.3",
-    "tailwindcss": "^3.2.4",
+    "tailwindcss": "^3.3.1",
     "typescript": "^4.6.4",
     "vite": "^3.2.3"
   }

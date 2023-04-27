@@ -22,6 +22,6 @@
     "noUnusedParameters": true,
     "resolveJsonModule": true
   },
-  "include": ["vite.config.ts", "src/**/*"],
+  "include": ["vite.config.ts", "src/**/*", "@types/index.d.ts"],
   "exclude": ["node_modules", "build"]
 }
