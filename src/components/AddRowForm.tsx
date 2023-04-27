@@ -5,7 +5,8 @@ import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
 import React from 'react';
 
-import { FormValues, TableRow, ToastOptions } from '../pages/Home/Home';
+import { ToastOptions } from '../hooks/useToast';
+import { FormValues, TableRow } from '../pages/Home/Home';
 import { dropdownValues } from '../utils/constants';
 
 interface AddRowFormProps {

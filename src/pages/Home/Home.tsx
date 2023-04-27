@@ -1,18 +1,18 @@
-import { deleteDoc, doc } from 'firebase/firestore';
-import { FormikHelpers, useFormik } from 'formik';
 import { Calendar, CalendarChangeParams } from 'primereact/calendar';
 import { DropdownChangeParams } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { v4 as uuid } from 'uuid';
+import React, { useEffect, useState } from 'react';
 
 import AddRowForm from '../../components/AddRowForm';
 import DeleteRowPopup from '../../components/DeleteRowPopup';
 import EmployeeTable from '../../components/EmployeeTable';
-import { db, fetchRows, saveRow } from '../../firebase';
+import { fetchRows } from '../../firebase';
+import { useToast } from '../../hooks/useToast';
 import Page from '../../layouts/Page';
-import { dropdownValues } from '../../utils/constants';
-import { formatDate, getCurrentDateAndTime } from '../../utils/helpers';
+import { admins, dropdownValues } from '../../utils/constants';
+import { formatDate } from '../../utils/helpers';
+import { useDeleteRow } from './useDeleteRow';
+import { useForm } from './useForm';
 
 // dark theme
 // import "primereact/resources/themes/vela-blue/theme.css";
@@ -31,12 +31,6 @@ export interface TableRow {
   note?: string;
 }
 
-export interface ToastOptions {
-  severity: 'success' | 'info' | 'warn' | 'error';
-  summary: string;
-  detail: string;
-}
-
 const Home = () => {
   const [tableRows, setTableRows] = useState<TableRow[]>([]);
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null);
@@ -46,86 +40,23 @@ const Home = () => {
   const [isDeleteRowModal, setIsDeleteRowModal] = useState(false);
   const [isInspectorVisible, setIsInspectorVisible] = useState(false);
 
-  const toast = useRef<Toast>(null);
-  const showToast = useCallback(({ severity, summary, detail }: ToastOptions) => {
-    if (toast.current) {
-      toast.current.show({
-        severity,
-        summary,
-        detail,
-      });
-    }
-  }, []);
+  const { toast, showToast } = useToast();
 
-  const initialValues = useMemo(
-    () => ({
-      name: '',
-      date: '',
-      note: '',
-    }),
-    []
-  );
+  const formik = useForm({ showToast, setTableRows, setIsSubmitLoading });
 
-  const validate = useCallback((values: FormValues) => {
-    const errors: Partial<FormValues> = {};
-
-    if (!values.name) {
-      errors.name = 'Name is not selected';
-    }
-    if (!values.date) {
-      errors.date = 'Date is not selected';
-    }
-
-    return errors;
-  }, []);
-
-  const handleSubmit = useCallback(
-    async (values: FormValues, formikHelpers: FormikHelpers<FormValues>) => {
-      setIsSubmitLoading(true);
-
-      const rowData: TableRow = {
-        id: uuid(),
-        name: values.name,
-        date: values.date,
-        note: values.note,
-        time: getCurrentDateAndTime(),
-      };
-
-      try {
-        await saveRow(rowData);
-        setTableRows(await fetchRows());
-        showToast({
-          severity: 'success',
-          summary: 'Table was updated',
-          detail: `${values.name} — ${values.date}`,
-        });
-      } catch (error) {
-        console.error('Error fetching rows:', error);
-        showToast({
-          severity: 'error',
-          summary: 'Table is not updated',
-          detail: `Error adding ${values.name} — ${values.date}`,
-        });
-      } finally {
-        setIsSubmitLoading(false);
-      }
-
-      formikHelpers.resetForm({ values: initialValues });
-    },
-    [initialValues, setIsSubmitLoading, showToast]
-  );
-
-  const formik = useFormik<FormValues>({
-    initialValues,
-    validate,
-    onSubmit: handleSubmit,
+  const handleDeleteRow = useDeleteRow({
+    selectedRow,
+    showToast,
+    setTableRows,
+    setIsDeleteRowModal,
+    setIsDeleteLoading,
+    setSelectedRow,
   });
 
   useEffect(() => {
     const fetchAndSetTableRows = async () => {
       try {
         const rows = await fetchRows();
-
         setTableRows(rows);
       } catch (error) {
         console.error('Error fetching rows:', error);
@@ -133,12 +64,11 @@ const Home = () => {
         setIsLoading(false);
       }
     };
-
     fetchAndSetTableRows();
   }, []);
 
   useEffect(() => {
-    if (formik.values.name === 'Roman Balabanov' && formik.values.note === 'Inspector') {
+    if (admins.includes(formik.values.name.toLowerCase()) && formik.values.note?.toLowerCase() === 'inspect') {
       setIsInspectorVisible((prev) => !prev);
       formik.setFieldValue('note', '');
     }
@@ -150,7 +80,6 @@ const Home = () => {
   const onCalendarChange = ({ value }: CalendarChangeParams) => {
     if (value instanceof Date) {
       const formattedDate = formatDate(value);
-
       formik.setFieldValue('date', formattedDate);
     }
   };
@@ -163,37 +92,6 @@ const Home = () => {
   const handleNoteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     formik.setFieldValue('note', e.target.value);
   };
-
-  const handleDelete = useCallback(async () => {
-    setIsDeleteLoading(true);
-    setIsDeleteRowModal(false);
-    if (!selectedRow) {
-      setIsDeleteLoading(false);
-
-      return;
-    }
-    const rowDocRef = doc(db, 'table', selectedRow.id);
-
-    try {
-      await deleteDoc(rowDocRef);
-      setTableRows(await fetchRows());
-      showToast({
-        severity: 'info',
-        summary: 'Table was updated',
-        detail: `Deleted ${selectedRow.name} — ${selectedRow.date}`,
-      });
-      setSelectedRow(null);
-    } catch (error) {
-      console.error('Home handleDelete error ==>', error);
-      showToast({
-        severity: 'error',
-        summary: 'Table is not updated',
-        detail: `Error deleting ${selectedRow.name} — ${selectedRow.date}`,
-      });
-    } finally {
-      setIsDeleteLoading(false);
-    }
-  }, [selectedRow, showToast]);
 
   return (
     <Page>
@@ -229,7 +127,7 @@ const Home = () => {
         </div>
       </section>
       <DeleteRowPopup
-        handleDelete={handleDelete}
+        handleDelete={handleDeleteRow}
         isDeleteRowModal={isDeleteRowModal}
         selectedRow={selectedRow}
         setIsDeleteRowModal={setIsDeleteRowModal}

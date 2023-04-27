@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { addDoc, collection, getDocs, getFirestore, QuerySnapshot } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, getFirestore, QuerySnapshot } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 import { TableRow } from './pages/Home/Home';
@@ -39,4 +39,9 @@ export const saveRow = async (row: TableRow) => {
   const q = collection(db, 'table');
 
   await addDoc(q, row);
+};
+
+export const deleteRow = async (rowId: TableRow['id']) => {
+  const rowDocRef = doc(db, 'table', rowId);
+  await deleteDoc(rowDocRef);
 };

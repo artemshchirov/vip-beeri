@@ -1,9 +1,10 @@
-interface DropdownValue {
+interface Worker {
   id: number;
   name: string;
+  admin?: boolean;
 }
 
-export const dropdownValues: DropdownValue[] = [
+const workers: Worker[] = [
   { id: 0, name: 'Dror Adri' },
   { id: 1, name: 'Aron Sidorov' },
   { id: 2, name: 'Nir Galisko' },
@@ -18,8 +19,12 @@ export const dropdownValues: DropdownValue[] = [
   { id: 11, name: 'Noa Avram' },
   { id: 12, name: 'Liel Batito' },
   { id: 13, name: 'Zead' },
-  { id: 14, name: 'Roman Balabanov' },
+  { id: 14, name: 'Roman Balabanov', admin: true },
 ];
+
+export const admins = workers.filter(({ admin }) => admin).map(({ name }) => name.toLowerCase());
+
+export const dropdownValues: Worker[] = workers;
 
 export interface Event {
   date: string;
