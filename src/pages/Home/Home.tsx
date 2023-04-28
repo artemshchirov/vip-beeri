@@ -99,6 +99,8 @@ const Home = () => {
   };
 
   const handleSortRowsByDate = (rows: TableRow[], field: string, order: boolean) => {
+    // FIXME add or delete field
+    console.log(field);
     const sorted = [...rows].sort((a, b) => {
       const dayStr = a.date.split(', ')[0];
       const [day, month] = dayStr.split(' ');
