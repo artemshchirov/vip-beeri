@@ -68,7 +68,12 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    if (admins.includes(formik.values.name.toLowerCase()) && formik.values.note?.toLowerCase() === 'inspect') {
+    // TODO refactor
+    const isAdmin = admins.includes(formik.values.name.toLowerCase());
+    const userInput = formik.values.note?.toLowerCase();
+    const password = 'inspect';
+    const isValidPassword = userInput === password;
+    if (isAdmin && isValidPassword) {
       setIsInspectorVisible((prev) => !prev);
       formik.setFieldValue('note', '');
     }
@@ -94,7 +99,6 @@ const Home = () => {
   };
 
   const handleSortRowsByDate = (rows: TableRow[], field: string, order: boolean) => {
-    console.log('field:', field, 'order:', order);
     const sorted = [...rows].sort((a, b) => {
       const dayStr = a.date.split(', ')[0];
       const [day, month] = dayStr.split(' ');

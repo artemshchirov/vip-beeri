@@ -30,7 +30,6 @@ export const useDeleteRow = ({
     try {
       await deleteRow(selectedRow.id);
       const rows = await fetchRows();
-      console.log(rows);
       setTableRows(rows);
       showToast({
         severity: 'info',
