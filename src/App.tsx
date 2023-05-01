@@ -10,7 +10,7 @@ const Home = lazy(() => import('./pages/Home/Home'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const Signin = lazy(() => import('./pages/Signin'));
 const Signup = lazy(() => import('./pages/Signup'));
-const Calendar = lazy(() => import('./pages/Calendar'));
+const Calendar = lazy(() => import('./pages/Calendar/Calendar'));
 
 const App: React.FC = () => {
   // const {currentUser} = useContext(AuthContext)
