@@ -22,6 +22,6 @@
     "noUnusedParameters": true,
     "resolveJsonModule": true
   },
-  "include": ["vite.config.ts", "src/**/*", "@types/index.d.ts"],
+  "include": ["vite.config.ts", "src/**/*", "@types/index.d.ts", "tailwind.config.cjs"],
   "exclude": ["node_modules", "build"]
 }

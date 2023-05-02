@@ -2,21 +2,21 @@ import { Column, ColumnSortParams } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React from 'react';
 
-import { TableRow } from '../pages/Home/Home';
+import { TableRow } from './Home';
 
 interface EmployeeTableProps {
   isLoading: boolean;
   tableRows: TableRow[];
   selectedRow: TableRow | null;
   setSelectedRow: React.Dispatch<React.SetStateAction<TableRow | null>>;
-  onSort: (rows: TableRow[], field: string, order: boolean) => TableRow[];
+  onSort: (rows: TableRow[], order: boolean) => TableRow[];
 }
 
 const EmployeeTable = ({ isLoading, tableRows, selectedRow, setSelectedRow, onSort }: EmployeeTableProps) => {
   return (
     <DataTable
       alwaysShowPaginator={false}
-      className='w-full text-xs sm:w-full lg:w-6/12 xl:w-full'
+      className='w-full text-xs'
       dataKey='id'
       emptyMessage='No data available'
       loading={isLoading}
@@ -27,14 +27,8 @@ const EmployeeTable = ({ isLoading, tableRows, selectedRow, setSelectedRow, onSo
       rows={10}
       selection={selectedRow}
       selectionMode='single'
-      size='large'
+      size='normal'
       sortOrder={1}
-      style={{
-        background: '#f8f9fa',
-        borderWidth: '1px 0 0 0',
-        transition: 'box-shadow 0.2s',
-        overflow: 'hidden',
-      }}
       value={tableRows}
     >
       <Column field='name' header='Name' sortable style={{ width: 'auto' }} />
@@ -42,10 +36,7 @@ const EmployeeTable = ({ isLoading, tableRows, selectedRow, setSelectedRow, onSo
         field='date'
         header='Date'
         sortable
-        sortFunction={(e: ColumnSortParams) => {
-          const { field, order } = e;
-          return onSort(e.data, field, order === -1);
-        }}
+        sortFunction={(e: ColumnSortParams) => onSort(e.data, e.order === -1)}
         style={{ width: 'auto' }}
       />
       {tableRows.some((row) => row.note) && <Column field='note' header='Note' style={{ width: 'auto' }} />}

@@ -1,16 +1,18 @@
+import moment from 'moment';
 import { Calendar, CalendarChangeParams } from 'primereact/calendar';
 import { DropdownChangeParams } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
 import React, { useEffect, useState } from 'react';
 
-import AddRowForm from '../../components/AddRowForm';
-import DeleteRowPopup from '../../components/DeleteRowPopup';
-import EmployeeTable from '../../components/EmployeeTable';
 import { fetchRows } from '../../firebase';
 import { useToast } from '../../hooks/useToast';
+import Container from '../../layouts/Container';
 import Page from '../../layouts/Page';
+import Section from '../../layouts/Section';
 import { admins, dropdownValues } from '../../utils/constants';
-import { formatDate } from '../../utils/helpers';
+import AddRowForm from './AddRowForm';
+import DeleteRowPopup from './DeleteRowPopup';
+import EmployeeTable from './EmployeeTable';
 import { useDeleteRow } from './useDeleteRow';
 import { useForm } from './useForm';
 
@@ -57,7 +59,7 @@ const Home = () => {
     const fetchAndSetTableRows = async () => {
       try {
         const rows = await fetchRows();
-        setTableRows(handleSortRowsByDate(rows, 'date', true));
+        setTableRows(handleSortByDate(rows, true));
       } catch (error) {
         console.error('Error fetching rows:', error);
       } finally {
@@ -68,7 +70,6 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    // TODO refactor
     const isAdmin = admins.includes(formik.values.name.toLowerCase());
     const userInput = formik.values.note?.toLowerCase();
     const password = 'inspect';
@@ -84,7 +85,7 @@ const Home = () => {
 
   const onCalendarChange = ({ value }: CalendarChangeParams) => {
     if (value instanceof Date) {
-      const formattedDate = formatDate(value);
+      const formattedDate = moment(value).format('D MMMM, dddd');
       formik.setFieldValue('date', formattedDate);
     }
   };
@@ -94,31 +95,19 @@ const Home = () => {
     formik.setFieldValue('name', newName);
   };
 
-  const handleNoteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    formik.setFieldValue('note', e.target.value);
-  };
+  const handleNoteChange = (e: React.ChangeEvent<HTMLInputElement>) => formik.setFieldValue('note', e.target.value);
 
-  const handleSortRowsByDate = (rows: TableRow[], field: string, order: boolean) => {
-    // FIXME add or delete field
-    console.log(field);
+  const handleSortByDate = (rows: TableRow[], order: boolean) => {
     const sorted = [...rows].sort((a, b) => {
-      const dayStr = a.date.split(', ')[0];
-      const [day, month] = dayStr.split(' ');
-      const year = new Date().getFullYear(); // assuming the year is the current year
-      const isoDateStr = `${year}-${month}-${day.padStart(2, '0')}`;
+      const dateA = moment(a.date, 'D MMM, dddd').toDate();
+      const dateB = moment(b.date, 'D MMM, dddd').toDate();
 
-      const dayStrB = b.date.split(', ')[0];
-      const [dayB, monthB] = dayStrB.split(' ');
-      const yearB = new Date().getFullYear(); // assuming the year is the current year
-      const isoDateStrB = `${yearB}-${monthB}-${dayB.padStart(2, '0')}`;
-
-      const dateA = new Date(isoDateStr).getTime();
-      const dateB = new Date(isoDateStrB).getTime();
-
-      if (order) {
-        return dateA - dateB;
+      if (dateA < dateB) {
+        return order ? -1 : 1;
+      } else if (dateA > dateB) {
+        return order ? 1 : -1;
       } else {
-        return dateB - dateA;
+        return 0;
       }
     });
 
@@ -127,10 +116,10 @@ const Home = () => {
 
   return (
     <Page>
-      <section className='container xl:h-[596px] flex flex-wrap xl:justify-evenly'>
-        <div className='flex flex-col items-center w-full h-full xl:w-4/12 '>
+      <Section className='flex flex-wrap w-full xl:items-center xl:justify-evenly'>
+        <Container className='flex flex-col w-full xl:w-4/12'>
           <Calendar
-            className='w-full text-xs lg:w-6/12 xl:w-full xl:min-h-[435px]'
+            className='text-lg'
             inline
             minDate={new Date()}
             onChange={(e: CalendarChangeParams) => onCalendarChange(e)}
@@ -148,17 +137,17 @@ const Home = () => {
             setIsDeleteRowModal={setIsDeleteRowModal}
             showToast={showToast}
           />
-        </div>
-        <div className='flex justify-center w-full xl:w-7/12'>
+        </Container>
+        <Container className='w-full xl:w-7/12'>
           <EmployeeTable
             isLoading={isLoading}
-            onSort={handleSortRowsByDate}
+            onSort={handleSortByDate}
             selectedRow={selectedRow}
             setSelectedRow={setSelectedRow}
             tableRows={tableRows}
           />
-        </div>
-      </section>
+        </Container>
+      </Section>
       <DeleteRowPopup
         handleDelete={handleDeleteRow}
         isDeleteRowModal={isDeleteRowModal}

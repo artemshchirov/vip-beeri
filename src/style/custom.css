@@ -25,11 +25,11 @@
 /********************
 * DISABLE SCROLLBAR *
 *********************/
-/* ::-webkit-scrollbar {
+::-webkit-scrollbar {
   display: none;
   -ms-overflow-style: none;
   scrollbar-width: none;
-} */
+}
 
 /************************
 * FIX SHAKE SCROLLBAR 1 *

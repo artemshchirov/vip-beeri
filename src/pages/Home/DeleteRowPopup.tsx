@@ -2,7 +2,7 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import React from 'react';
 
-import { TableRow } from '../pages/Home/Home';
+import { TableRow } from './Home';
 
 interface DeleteRowPopupProps {
   isDeleteRowModal: boolean;

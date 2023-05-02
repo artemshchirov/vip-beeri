@@ -20,8 +20,10 @@ export const auth = getAuth();
 export const storage = getStorage();
 export const db = getFirestore();
 
+const tableCollection = import.meta.env.VITE_FIREBASE_DB;
+
 export const fetchRows = async (): Promise<TableRow[]> => {
-  const q = collection(db, 'table');
+  const q = collection(db, tableCollection);
   const querySnapshot: QuerySnapshot = await getDocs(q);
 
   return querySnapshot.docs.map(
@@ -36,12 +38,12 @@ export const fetchRows = async (): Promise<TableRow[]> => {
 };
 
 export const saveRow = async (row: TableRow) => {
-  const q = collection(db, 'table');
+  const q = collection(db, tableCollection);
 
   await addDoc(q, row);
 };
 
 export const deleteRow = async (rowId: TableRow['id']) => {
-  const rowDocRef = doc(db, 'table', rowId);
+  const rowDocRef = doc(db, tableCollection, rowId);
   await deleteDoc(rowDocRef);
 };

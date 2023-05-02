@@ -5,9 +5,9 @@ import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
 import React from 'react';
 
-import { ToastOptions } from '../hooks/useToast';
-import { FormValues, TableRow } from '../pages/Home/Home';
-import { dropdownValues } from '../utils/constants';
+import { ToastOptions } from '../../hooks/useToast';
+import { dropdownValues } from '../../utils/constants';
+import { FormValues, TableRow } from './Home';
 
 interface AddRowFormProps {
   formik: FormikValues;
@@ -35,11 +35,8 @@ const AddRowForm = ({
   onNoteChange,
 }: AddRowFormProps) => {
   return (
-    <form
-      className='flex flex-col items-center w-full my-3 xl:mt-5 sm:w-full lg:w-6/12 xl:w-full xl:flex-col'
-      onSubmit={formik.handleSubmit}
-    >
-      <div className='flex flex-row w-full gap-2 xl:gap-2 xl:w-full'>
+    <form className='flex flex-col items-center w-full my-2.5 xl:mt-3 xl:mb-0' onSubmit={formik.handleSubmit}>
+      <div className='flex flex-row w-full gap-2'>
         <div className='w-6/12'>
           <Dropdown
             className={classNames('w-full', {
@@ -99,7 +96,7 @@ const AddRowForm = ({
             />
             <Button
               aria-label='Delete'
-              className='w-6/12 whitespace-nowrap '
+              className='w-6/12 whitespace-nowrap'
               disabled={selectedRow === null}
               icon='pi pi-trash'
               label='Delete'
