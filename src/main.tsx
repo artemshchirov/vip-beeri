@@ -5,6 +5,7 @@ import 'primeicons/primeicons.css';
 import 'primereact/resources/primereact.min.css';
 import 'primereact/resources/themes/saga-blue/theme.css';
 
+import { Analytics } from '@vercel/analytics/react';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -19,6 +20,7 @@ ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
       <Router>
         <App />
+        <Analytics />
       </Router>
     </React.StrictMode>
   </AuthContextProvider>
