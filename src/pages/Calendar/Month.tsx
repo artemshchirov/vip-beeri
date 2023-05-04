@@ -39,15 +39,13 @@ const Month = ({ getEventsForDate, isToday, weeks, className, currentMonth, mont
           week.map((day) => (
             <Day
               className={`border relative p-2 ${
-                isToday(day)
-                  ? 'border-l-[#F49918] border-t-[#833fb1] border-r-[#1099D6] border-b-[#E63A22] border-2'
-                  : 'border-black'
+                isToday(day) && 'border-l-[#F49918] border-t-[#833fb1] border-r-[#1099D6] border-b-[#E63A22] border-2'
               } ${
                 isSaturday(day) && !isCurrentMonth(day, currentMonth, monthsOffset)
                   ? 'border-[#e6392267]'
                   : isSaturday(day)
                   ? 'border-[#E63A22]'
-                  : ''
+                  : 'border-black'
               } ${!isCurrentMonth(day, currentMonth, monthsOffset) ? 'border-gray-300 text-gray-400' : ''}`}
               key={day.toString()}
             >

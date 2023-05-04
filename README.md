@@ -42,7 +42,7 @@ This project uses the following technologies:
 
 ### FIX
 
+- [x] Footer/Header heights
 - [ ] Hide rows with past days from table
 - [ ] Hide empty weeks from Calendar
 - [ ] Rerender Calendar on table changes
-- [ ] Footer/Header heights
