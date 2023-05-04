@@ -2,7 +2,7 @@
   "name": "vip-beeri",
   "private": true,
   "description": "Work calendar",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "author": "Artem Shchirov",
   "main": "main.tsx",
   "scripts": {

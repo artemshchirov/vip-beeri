@@ -4,7 +4,6 @@ import { Route, Routes } from 'react-router-dom';
 import Spinner from './components/ui/Spinner';
 import { fetchRows } from './firebase';
 import { TableRow } from './pages/Home/Home';
-import { events } from './utils/constants';
 
 const Home = lazy(() => import('./pages/Home/Home'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -43,7 +42,7 @@ const App: React.FC = () => {
       <Routes>
         <Route element={<Signup />} path='/signup' />
         <Route element={<Signin />} path='/signin' />
-        <Route element={<Calendar events={events} workers={workers} />} path='/calendar' />
+        <Route element={<Calendar workers={workers} />} path='/calendar' />
         <Route element={<Home />} path='/' />
         <Route element={<NotFound />} path='*' />
         {/* <Route

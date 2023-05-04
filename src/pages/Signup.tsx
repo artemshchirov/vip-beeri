@@ -6,7 +6,7 @@ import { InputText } from 'primereact/inputtext';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import logo from '../assets/logo.png';
+import logoLight from '../assets/logoLight.svg';
 import { auth, db } from '../firebase';
 
 const Signup = () => {
@@ -80,7 +80,7 @@ const Signup = () => {
     <div className='mb-auto flex flex-col min-h-screen justify-center items-center bg-[conic-gradient(at_right,_var(--tw-gradient-stops))] from-indigo-200 via-slate-600 to-indigo-200'>
       <div className='w-full p-6 bg-white shadow-lg lg:w-5/12'>
         <div className='mb-5 text-center'>
-          <img alt='hyper' className='mx-auto mb-3' src={logo} />
+          <img alt='hyper' className='mx-auto mb-3' src={logoLight} />
           <div className='mb-3 text-3xl font-medium text-black'>Добро пожаловать!</div>
           <span className='font-medium leading-3 text-gray-400 text-md'>Уже есть аккаунт?</span>
           <Link className='ml-2 font-medium text-blue-500 no-underline cursor-pointer text-md' to='/signin'>
