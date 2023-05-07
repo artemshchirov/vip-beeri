@@ -1,8 +1,9 @@
+import { logEvent } from 'firebase/analytics';
 import { FormikHelpers, useFormik } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { v4 as uuid } from 'uuid';
 
-import { fetchRows, saveRow } from '../../firebase';
+import { analytics, fetchRows, saveRow } from '../../firebase';
 import { ToastOptions } from '../../hooks/useToast';
 import { getCurrentDateAndTime } from '../../utils/helpers';
 import { FormValues, TableRow } from './Home';
@@ -75,6 +76,7 @@ export const useForm = ({ showToast, setTableRows, setIsSubmitLoading }: UseForm
       }
 
       formikHelpers.resetForm({ values: initialValues });
+      logEvent(analytics, 'button_click', { buttonId: 'add_row_button' });
     },
     [initialValues, setIsSubmitLoading, setTableRows, showToast]
   );

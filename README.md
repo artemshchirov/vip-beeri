@@ -31,8 +31,10 @@ This project uses the following technologies:
 - [x] Sort by date instead of numbers
 - [x] Review calendar page
 - [x] Design a logo
-- [x] Vercel/Google analytics
-- [ ] Speed Insights
+- [x] Vercel Analytics
+- [x] Vercel Speed Insights
+- [x] Google analytics
+- [ ] Vercel development environment
 - [ ] Design the calendar page
 - [ ] Add edit button for admin
 - [ ] Add filter by name on calendar
@@ -45,7 +47,8 @@ This project uses the following technologies:
 ### FIX
 
 - [x] Footer/Header heights
+- [ ] Page Calendar NOT_FOUND on F5
 - [ ] Saturday borders color in Calendar
-- [ ] Hide rows with past days from table
+- [ ] Hide rows with past days from table and calendar
 - [ ] Hide empty weeks from Calendar
 - [ ] Rerender Calendar on table changes

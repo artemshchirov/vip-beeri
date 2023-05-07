@@ -1,10 +1,13 @@
+// dark theme
+// import "primereact/resources/themes/vela-blue/theme.css";
+import { logEvent, setUserProperties } from 'firebase/analytics';
 import moment from 'moment';
 import { Calendar, CalendarChangeParams } from 'primereact/calendar';
 import { DropdownChangeParams } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
 import React, { useEffect, useState } from 'react';
 
-import { fetchRows } from '../../firebase';
+import { analytics, fetchRows } from '../../firebase';
 import { useToast } from '../../hooks/useToast';
 import Container from '../../layouts/Container';
 import Page from '../../layouts/Page';
@@ -15,9 +18,6 @@ import DeleteRowPopup from './DeleteRowPopup';
 import EmployeeTable from './EmployeeTable';
 import { useDeleteRow } from './useDeleteRow';
 import { useForm } from './useForm';
-
-// dark theme
-// import "primereact/resources/themes/vela-blue/theme.css";
 
 export interface FormValues {
   name: string;
@@ -88,11 +88,26 @@ const Home = () => {
       const formattedDate = moment(value).format('D MMMM, dddd');
       formik.setFieldValue('date', formattedDate);
     }
+
+    setUserProperties(analytics, { timeFormat: value });
   };
 
   const handleDropdownChange = (e: DropdownChangeParams) => {
     const newName = dropdownValues.find((x) => x.name === e.value)?.name;
     formik.setFieldValue('name', newName);
+
+    logEvent(analytics, 'select_name', {
+      name: newName,
+      userAgent: window.navigator.userAgent,
+      time: Date(),
+      formData: [
+        {
+          formName: formik.values.name,
+          formDate: formik.values.date,
+          formNote: formik.values.note,
+        },
+      ],
+    });
   };
 
   const handleNoteChange = (e: React.ChangeEvent<HTMLInputElement>) => formik.setFieldValue('note', e.target.value);
