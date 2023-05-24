@@ -10,10 +10,8 @@
     "host": "vite --host",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "format": "prettier --check \"**/*.{ts,tsx,css,scss,md,json}\"",
-    "format:fix": "prettier --write \"**/*.{ts,tsx,css,scss,md,json}\"",
-    "lint": "eslint src/**/*.{tsx,ts} --config ./.eslintrc.json --ignore-path ./.gitignore",
-    "lint:fix": "eslint --fix src/**/*.{tsx,ts} --config ./.eslintrc.json --ignore-path ./.gitignore"
+    "format": "prettier --write \"**/*.{ts,tsx,css,scss,md,json}\"",
+    "lint": "eslint --fix src/**/*.{tsx,ts} --config ./.eslintrc.json --ignore-path ./.gitignore"
   },
   "dependencies": {
     "@types/react": "^18.2.0",

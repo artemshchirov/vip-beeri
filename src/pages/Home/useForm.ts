@@ -75,7 +75,14 @@ export const useForm = ({ showToast, setTableRows, setIsSubmitLoading }: UseForm
         setIsSubmitLoading(false);
       }
 
-      formikHelpers.resetForm({ values: initialValues });
+      const { name, ...otherValues } = initialValues; // Destructure 'name' and other fields
+
+      const newValues: FormValues = {
+        name: values.name,
+        ...otherValues, // Spread other fields
+      };
+
+      formikHelpers.resetForm({ values: newValues });
       logEvent(analytics, 'button_click', { buttonId: 'add_row_button' });
     },
     [initialValues, setIsSubmitLoading, setTableRows, showToast]
