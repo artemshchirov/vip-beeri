@@ -1,5 +1,4 @@
 import moment, { Moment } from 'moment';
-import { classNames } from 'primereact/utils';
 import React from 'react';
 
 import Day from './Day';
@@ -24,55 +23,82 @@ const Month = ({ getEventsForDate, isToday, weeks, className, currentMonth, mont
     return moment(day).isSame(month.clone().add(monthsOffset, 'month'), 'month');
   };
 
+  const isDayInOtherMonthButInSameWeekAsCurrentMonth = (day: Moment, currentMonth: Moment, monthsOffset = 0) => {
+    const firstDayOfWeek = weeks[0][0];
+    const lastDayOfWeek = weeks[weeks.length - 1][6];
+    return (
+      !isCurrentMonth(day, currentMonth, monthsOffset) && day.isBetween(firstDayOfWeek, lastDayOfWeek, 'day', '[]')
+    );
+  };
+
   return (
     <>
-      <div className={`grid grid-cols-7 gap-1 w-full  text-black`}>
+      <div className={`grid w-full grid-cols-7 gap-1  text-black`}>
         {daysOfWeek.map((day) => (
-          <div className={`mb-1 font-bold text-center ${day === 'Sat' ? 'text-[#E63A22]' : ''}`} key={day}>
+          <div className={`mb-1 text-center font-bold ${day === 'Sat' ? 'text-[#E63A22]' : ''}`} key={day}>
             {day}
           </div>
         ))}
       </div>
-      <div
-        className={`grid grid-cols-7  grid-rows-7 text-center  gap-0.5  text-black bg-gray-50 w-full lg:h-full ${className}`}
-      >
-        {weeks.map((week) =>
-          week.map((day) => {
-            const isTodayFlag = isToday(day);
-            const isSaturdayFlag = isSaturday(day);
-            const isCurrentMonthFlag = isCurrentMonth(day, currentMonth, monthsOffset);
-            const eventWorkers = getEventsForDate(day);
-            const currentDayBorders =
-              'border-l-[#F49918] border-t-[#833fb1] border-r-[#1099D6] border-b-[#E63A22] border-2';
-            const dayClassName = classNames('border relative p-2', {
-              [currentDayBorders]: isTodayFlag,
-              'border-[#e6392267]': isSaturdayFlag && !isCurrentMonthFlag,
-              'border-[#E63A22]': isSaturdayFlag && isCurrentMonthFlag,
-              'border-gray-500': !isSaturdayFlag,
-              'border-gray-300 text-gray-400': !isCurrentMonthFlag,
-            });
+      <div className={`row-auto grid h-full w-full grid-cols-7 gap-1 bg-gray-50  text-black ${className}`}>
+        {weeks.map((week) => {
+          // Check if the week contains any days from the current month
+          const hasDaysFromCurrentMonth = week.some((day) => isCurrentMonth(day, currentMonth, monthsOffset));
 
-            const dayNumberClassName = classNames(
-              'absolute top-0 left-0 flex self-start ml-1 text-xs  md:text-md lg:text-lg',
-              {
-                'font-medium': isTodayFlag,
-              }
+          // Skip rendering the week if it doesn't have any days from the current month
+          if (!hasDaysFromCurrentMonth) {
+            return null;
+          }
+          return week.map((day) => {
+            const isSameMonth = isCurrentMonth(day, currentMonth, monthsOffset);
+            const isSameWeek = day.isSame(week[0], 'week');
+            const isOtherMonthInSameWeek = isDayInOtherMonthButInSameWeekAsCurrentMonth(
+              day,
+              currentMonth,
+              monthsOffset
             );
 
-            return (
-              <Day className={dayClassName} key={day.toString()}>
-                <p className={dayNumberClassName}>{day.date()}</p>
-                <ul className='h-[65px] flex flex-col items-center mt-2 lg:mt-1 justify-start'>
-                  {eventWorkers.map((worker) => (
-                    <li className='text-xs lg:text-sm' key={worker}>
-                      {worker}
-                    </li>
-                  ))}
-                </ul>
-              </Day>
-            );
-          })
-        )}
+            if (isSameMonth && isSameWeek) {
+              // TODO refactor classnames
+              return (
+                <Day
+                  className={`border ${
+                    isToday(day) &&
+                    'border-2 border-b-[#E63A22] border-l-[#F49918] border-r-[#1099D6] border-t-[#833fb1]'
+                  } ${
+                    isSaturday(day) && !isCurrentMonth(day, currentMonth, monthsOffset)
+                      ? 'border-[#e6392267]'
+                      : isSaturday(day)
+                      ? 'border-[#E63A22]'
+                      : !isCurrentMonth(day, currentMonth, monthsOffset) || isOtherMonthInSameWeek
+                      ? 'border-gray-300 text-gray-400'
+                      : 'border-black'
+                  }`}
+                  key={day.toString()}
+                >
+                  <p
+                    className={`${
+                      isToday(day) ? 'font-medium' : ''
+                    } md:text-md ml-0.5  flex self-start  text-xs lg:text-sm`}
+                  >
+                    {day.date()}
+                  </p>
+                  <ul className='flex h-[80px] flex-col items-center justify-start lg:h-[90px] '>
+                    {getEventsForDate(day).map((worker) => (
+                      <li className='text-xs lg:text-sm' key={worker}>
+                        {worker}
+                      </li>
+                    ))}
+                  </ul>
+                </Day>
+              );
+            } else if (isOtherMonthInSameWeek) {
+              return <Day key={day.toString()} />;
+            } else {
+              return null;
+            }
+          });
+        })}
       </div>
     </>
   );

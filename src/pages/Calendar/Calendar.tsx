@@ -16,21 +16,26 @@ const Calendar = ({ workers }: CalendarProps) => {
   const [currentMonth, setCurrentMonth] = useState(moment());
 
   const getMonthWeeks = (date: moment.Moment, monthOffset = 0) => {
-    const targetDate = date.clone().add(monthOffset, 'month');
-    const monthStart = targetDate.clone().startOf('month');
-    const monthEnd = targetDate.clone().endOf('month').endOf('week');
+    // FIXME assume current year
+    const monthStart = date
+      .clone()
+      .month(date.month() + monthOffset)
+      .startOf('month');
+    const monthEnd = date
+      .clone()
+      .month(date.month() + monthOffset + 1)
+      .subtract(1, 'day')
+      .endOf('week');
     const startDate = monthStart.clone().startOf('week');
     const endDate = monthEnd.clone().endOf('week');
     const weeks: moment.Moment[][] = [];
 
-    for (let d = startDate; d <= endDate; d.add(1, 'day')) {
-      if (d.month() === targetDate.month()) {
-        const week =
-          weeks[Math.floor((d.valueOf() - startDate.valueOf()) / (1000 * 60 * 60 * 24 * 7))] ||
-          (weeks[Math.floor((d.valueOf() - startDate.valueOf()) / (1000 * 60 * 60 * 24 * 7))] = []);
+    for (let d = startDate.clone(); d <= endDate; d.add(1, 'day')) {
+      const week =
+        weeks[Math.floor((d.valueOf() - startDate.valueOf()) / (1000 * 60 * 60 * 24 * 7))] ||
+        (weeks[Math.floor((d.valueOf() - startDate.valueOf()) / (1000 * 60 * 60 * 24 * 7))] = []);
 
-        week.push(d.clone());
-      }
+      week.push(d.clone());
     }
 
     return weeks;
@@ -62,15 +67,15 @@ const Calendar = ({ workers }: CalendarProps) => {
 
   return (
     <Page>
-      <Section className='flex flex-col justify-center w-full mx-2 md:mx-3'>
-        <Container className=' flex flex-col flex-1 w-full gap-3 lg:flex-row justify-evenly'>
-          <article className='flex flex-col items-center w-full p-2 bg-white border'>
-            <div className='flex items-center justify-between w-full mb-2'>
+      <Section className='mx-3 flex w-full flex-col justify-center'>
+        <Container className=' flex w-full flex-1 flex-col justify-evenly gap-3 lg:flex-row'>
+          <article className='flex w-full flex-col items-center border bg-white p-2'>
+            <div className='mb-2 flex w-full items-center justify-between'>
               <h2 className='text-3xl font-bold text-black'>{currentMonth.format('MMMM yyyy')}</h2>
               <div className='hidden lg:block'>
                 <Button icon='pi pi-arrow-left ' onClick={handlePrevMonthClick} />
               </div>
-              <div className='flex gap-2 lg:hidden w-max'>
+              <div className='flex w-max gap-2 lg:hidden'>
                 <Button icon='pi pi-arrow-left' onClick={handlePrevMonthClick} />
                 <Button icon='pi pi-arrow-right' onClick={handleNextMonthClick} />
               </div>
@@ -82,14 +87,9 @@ const Calendar = ({ workers }: CalendarProps) => {
               weeks={getMonthWeeks(currentMonth)}
             />
           </article>
-
-          <article className='flex-col items-center  w-full p-2 bg-white border lg:flex'>
-            <div className='flex items-center justify-between w-full mb-2'>
-              <Button
-                className='invisible lg:visible self-start'
-                icon='pi pi-arrow-right'
-                onClick={handleNextMonthClick}
-              />
+          <article className='flex w-full flex-col items-center border bg-white p-2'>
+            <div className='mb-2 flex w-full items-center justify-between'>
+              <Button className='invisible lg:visible' icon='pi pi-arrow-right' onClick={handleNextMonthClick} />
               <h2 className='text-3xl font-bold text-black'>
                 {currentMonth.clone().add(1, 'month').format('MMMM yyyy')}
               </h2>
