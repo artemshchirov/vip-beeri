@@ -1,4 +1,5 @@
 import moment, { Moment } from 'moment';
+import { classNames } from 'primereact/utils';
 import React from 'react';
 
 import Day from './Day';
@@ -33,38 +34,44 @@ const Month = ({ getEventsForDate, isToday, weeks, className, currentMonth, mont
         ))}
       </div>
       <div
-        className={`grid grid-cols-7  grid-rows-7 text-center  gap-1  text-black bg-gray-100 w-full h-full ${className}`}
+        className={`grid grid-cols-7  grid-rows-7 text-center  gap-0.5  text-black bg-gray-50 w-full lg:h-full ${className}`}
       >
         {weeks.map((week) =>
-          week.map((day) => (
-            <Day
-              className={`border relative p-2 ${
-                isToday(day) && 'border-l-[#F49918] border-t-[#833fb1] border-r-[#1099D6] border-b-[#E63A22] border-2'
-              } ${
-                isSaturday(day) && !isCurrentMonth(day, currentMonth, monthsOffset)
-                  ? 'border-[#e6392267]'
-                  : isSaturday(day)
-                  ? 'border-[#E63A22]'
-                  : 'border-black'
-              } ${!isCurrentMonth(day, currentMonth, monthsOffset) ? 'border-gray-300 text-gray-400' : ''}`}
-              key={day.toString()}
-            >
-              <p
-                className={`${
-                  isToday(day) ? 'font-medium' : ''
-                } absolute top-0 left-0 flex self-start ml-1 text-xs  md:text-md lg:text-lg`}
-              >
-                {day.date()}
-              </p>
-              <ul className='h-[65px] flex flex-col items-center mt-2 lg:mt-1 justify-start'>
-                {getEventsForDate(day).map((worker) => (
-                  <li className='text-xs lg:text-sm' key={worker}>
-                    {worker}
-                  </li>
-                ))}
-              </ul>
-            </Day>
-          ))
+          week.map((day) => {
+            const isTodayFlag = isToday(day);
+            const isSaturdayFlag = isSaturday(day);
+            const isCurrentMonthFlag = isCurrentMonth(day, currentMonth, monthsOffset);
+            const eventWorkers = getEventsForDate(day);
+            const currentDayBorders =
+              'border-l-[#F49918] border-t-[#833fb1] border-r-[#1099D6] border-b-[#E63A22] border-2';
+            const dayClassName = classNames('border relative p-2', {
+              [currentDayBorders]: isTodayFlag,
+              'border-[#e6392267]': isSaturdayFlag && !isCurrentMonthFlag,
+              'border-[#E63A22]': isSaturdayFlag && isCurrentMonthFlag,
+              'border-gray-500': !isSaturdayFlag,
+              'border-gray-300 text-gray-400': !isCurrentMonthFlag,
+            });
+
+            const dayNumberClassName = classNames(
+              'absolute top-0 left-0 flex self-start ml-1 text-xs  md:text-md lg:text-lg',
+              {
+                'font-medium': isTodayFlag,
+              }
+            );
+
+            return (
+              <Day className={dayClassName} key={day.toString()}>
+                <p className={dayNumberClassName}>{day.date()}</p>
+                <ul className='h-[65px] flex flex-col items-center mt-2 lg:mt-1 justify-start'>
+                  {eventWorkers.map((worker) => (
+                    <li className='text-xs lg:text-sm' key={worker}>
+                      {worker}
+                    </li>
+                  ))}
+                </ul>
+              </Day>
+            );
+          })
         )}
       </div>
     </>

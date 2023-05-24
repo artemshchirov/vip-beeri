@@ -2,7 +2,7 @@ import React from 'react';
 
 interface DayProps {
   children: React.ReactNode;
-  className: string;
+  className?: string;
 }
 
 const Day = ({ children, className }: DayProps) => {
