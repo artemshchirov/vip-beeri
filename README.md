@@ -34,8 +34,8 @@ This project uses the following technologies:
 - [x] Vercel Analytics
 - [x] Vercel Speed Insights
 - [x] Google analytics
-- [ ] Vercel development environment
-- [ ] Design the calendar page
+- [x] Vercel development environment
+- [x] Design the calendar page
 - [ ] Add edit button for admin
 - [ ] Add filter by name on calendar
 - [ ] Add day/night work shift icon
@@ -50,5 +50,5 @@ This project uses the following technologies:
 - [ ] Page Calendar NOT_FOUND on F5
 - [ ] Saturday borders color in Calendar
 - [ ] Hide rows with past days from table and calendar
-- [ ] Hide empty weeks from Calendar
+- [x] Hide empty weeks from Calendar
 - [ ] Rerender Calendar on table changes
