@@ -6,10 +6,10 @@ import textBlue from '../assets/textBlue.svg';
 const Logo: React.FC = () => {
   return (
     <a className='flex' href='https://vip-beeri.vercel.app/'>
-      <img alt='Logo' className='w-20 mr-1 sm:mr-3 h-14 ' src={logoLight} />
+      <img alt='Logo' className='mr-1 h-14 w-20 sm:mr-3 ' src={logoLight} />
       <img
         alt='Variable Information Printing'
-        className='hidden h-4 mx-auto mt-auto sm:block sm:w-64 sm:h-12'
+        className='mx-auto mt-auto hidden h-4 sm:block sm:h-12 sm:w-64'
         src={textBlue}
       />
     </a>

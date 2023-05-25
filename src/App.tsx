@@ -13,7 +13,6 @@ const Calendar = lazy(() => import('./pages/Calendar/Calendar'));
 
 const App: React.FC = () => {
   // const {currentUser} = useContext(AuthContext)
-  // console.log("App, currentUser", currentUser);
 
   // const ProtectedRoute = ({ children }) => {
   //   if (!currentUser) {

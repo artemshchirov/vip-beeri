@@ -23,14 +23,10 @@ const Signup = () => {
     const password = e.target[2].value;
 
     // const file = e.target[3].files[0];
-    console.log('Signup onSubmit displayName:', displayName);
-    console.log('Signup onSubmit email:', email);
-    console.log('Signup onSubmit password:', password);
     try {
       // Create user
       const res = await createUserWithEmailAndPassword(auth, email, password);
 
-      console.log('res ==>', res);
       await setDoc(doc(db, 'users', res.user.uid), {
         uid: res.user.uid,
         displayName,
@@ -77,19 +73,19 @@ const Signup = () => {
   };
 
   return (
-    <div className='mb-auto flex flex-col min-h-screen justify-center items-center bg-[conic-gradient(at_right,_var(--tw-gradient-stops))] from-indigo-200 via-slate-600 to-indigo-200'>
-      <div className='w-full p-6 bg-white shadow-lg lg:w-5/12'>
+    <div className='mb-auto flex min-h-screen flex-col items-center justify-center bg-[conic-gradient(at_right,_var(--tw-gradient-stops))] from-indigo-200 via-slate-600 to-indigo-200'>
+      <div className='w-full bg-white p-6 shadow-lg lg:w-5/12'>
         <div className='mb-5 text-center'>
           <img alt='hyper' className='mx-auto mb-3' src={logoLight} />
           <div className='mb-3 text-3xl font-medium text-black'>Добро пожаловать!</div>
-          <span className='font-medium leading-3 text-gray-400 text-md'>Уже есть аккаунт?</span>
-          <Link className='ml-2 font-medium text-blue-500 no-underline cursor-pointer text-md' to='/signin'>
+          <span className='text-md font-medium leading-3 text-gray-400'>Уже есть аккаунт?</span>
+          <Link className='text-md ml-2 cursor-pointer font-medium text-blue-500 no-underline' to='/signin'>
             Войти
           </Link>
         </div>
 
         <form onSubmit={onSubmit}>
-          <label className='block mt-3 mb-2 font-medium text-gray-600 text-md' htmlFor='name'>
+          <label className='text-md mb-2 mt-3 block font-medium text-gray-600' htmlFor='name'>
             Имя и фамилия
           </label>
           <InputText
@@ -99,7 +95,7 @@ const Signup = () => {
             type='text'
           />
 
-          <label className='block mt-3 mb-2 font-medium text-gray-600 text-md' htmlFor='name'>
+          <label className='text-md mb-2 mt-3 block font-medium text-gray-600' htmlFor='name'>
             Электронный адрес
           </label>
           <InputText
@@ -109,7 +105,7 @@ const Signup = () => {
             type='text'
           />
 
-          <label className='block mt-3 mb-2 font-medium text-gray-600' htmlFor='password'>
+          <label className='mb-2 mt-3 block font-medium text-gray-600' htmlFor='password'>
             Пароль
           </label>
           <InputText
@@ -119,12 +115,12 @@ const Signup = () => {
             type='password'
           />
 
-          <div className='flex items-center justify-between mt-3 mb-6'>
+          <div className='mb-6 mt-3 flex items-center justify-between'>
             <div className='flex items-center text-gray-600'>
               <Checkbox checked={checked} className='mr-2' id='rememberme' onChange={(e) => setChecked(e.checked)} />
               <label htmlFor='rememberme'>Запомнить меня</label>
             </div>
-            <a className='ml-2 font-medium text-right text-blue-500 no-underline cursor-pointer'>Забыл свой пароль?</a>
+            <a className='ml-2 cursor-pointer text-right font-medium text-blue-500 no-underline'>Забыл свой пароль?</a>
           </div>
           {error ? <span>Что-то пошло не так...</span> : null}
           <Button

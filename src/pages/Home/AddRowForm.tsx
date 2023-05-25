@@ -35,8 +35,8 @@ const AddRowForm = ({
   onNoteChange,
 }: AddRowFormProps) => {
   return (
-    <form className='flex flex-col items-center w-full my-2.5 xl:mt-3 xl:mb-0' onSubmit={formik.handleSubmit}>
-      <div className='flex flex-row w-full gap-2'>
+    <form className='my-2.5 flex w-full flex-col items-center xl:mb-0 xl:mt-3' onSubmit={formik.handleSubmit}>
+      <div className='flex w-full flex-row gap-2'>
         <div className='w-6/12'>
           <Dropdown
             className={classNames('w-full', {
@@ -64,7 +64,7 @@ const AddRowForm = ({
           />
         </div>
       </div>
-      <div className='w-full mt-2'>
+      <div className='mt-2 w-full'>
         <Button
           aria-label='Submit'
           className='w-full whitespace-nowrap'
@@ -75,7 +75,7 @@ const AddRowForm = ({
           type='submit'
         />
       </div>
-      <div className='flex justify-between w-full gap-2 mt-2'>
+      <div className='mt-2 flex w-full justify-between gap-2'>
         {isInspectorVisible ? (
           <>
             <Button

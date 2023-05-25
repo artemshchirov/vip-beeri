@@ -131,8 +131,8 @@ const Home = () => {
 
   return (
     <Page>
-      <Section className='flex flex-wrap w-full xl:items-center xl:justify-evenly'>
-        <Container className='flex flex-col w-full xl:w-4/12'>
+      <Section className='flex w-full flex-wrap xl:items-center xl:justify-evenly'>
+        <Container className='flex w-full flex-col xl:w-4/12'>
           <Calendar
             className='text-lg'
             inline

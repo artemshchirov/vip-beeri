@@ -48,7 +48,7 @@ const DeleteRowPopup = ({ isDeleteRowModal, setIsDeleteRowModal, selectedRow, ha
       visible={isDeleteRowModal}
     >
       <div>
-        <i className='mb-3 mr-3 pi pi-exclamation-triangle' style={{ fontSize: '2rem' }} />
+        <i className='pi pi-exclamation-triangle mb-3 mr-3' style={{ fontSize: '2rem' }} />
         {selectedRow && (
           <span>
             Are you sure you want to {/* FIXME */}

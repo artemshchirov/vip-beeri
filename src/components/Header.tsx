@@ -5,8 +5,8 @@ import CustomLink from './ui/CustomLink';
 
 const Header: React.FC = () => {
   return (
-    <header className='px-2 bg-white border-gray-200 md:px-4 xl:px-8 lg:px-6 '>
-      <nav className='container flex items-center justify-between mx-auto'>
+    <header className='border-gray-200 bg-white px-2 md:px-4 lg:px-6 xl:px-8 '>
+      <nav className='container mx-auto flex items-center justify-between'>
         <Logo />
         <ul className='flex text-[#213C7D] '>
           <li>
